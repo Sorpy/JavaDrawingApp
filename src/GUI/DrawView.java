@@ -21,12 +21,14 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.Enumeration;
+import java.util.Iterator;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import processor.Processor;
@@ -42,25 +44,29 @@ public class DrawView extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JButton colorChooserButton;
+    private javax.swing.JMenuItem deleteButton;
     private javax.swing.JToggleButton dragSelectToggleButton;
     private javax.swing.JPanel drawPanel;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenu imageMenu;
+    private static javax.swing.JList<String> jList1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JList<ModelShape> panelItemsList;
     private javax.swing.JToggleButton rectToggleButton;
+    private javax.swing.JMenuItem redoButton;
     private javax.swing.JToggleButton selectToggleButton;
     private javax.swing.JPanel sidePanel;
     private javax.swing.JToolBar toolBar;
+    private javax.swing.JMenuItem undoButton;
     // End of variables declaration//GEN-END:variables
     public Processor processor;
     public static Color currentColor = Color.RED;
     private JColorChooser colorChooser;
     private boolean toggled = false;
+    private static DefaultListModel listModel;
     /**
      * Creates new form DrawView
      */
@@ -98,12 +104,15 @@ public class DrawView extends JFrame {
         drawPanel = new DrawingPanel(this);
         sidePanel = new javax.swing.JPanel();
         colorChooserButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        panelItemsList = new javax.swing.JList<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
+        undoButton = new javax.swing.JMenuItem();
+        redoButton = new javax.swing.JMenuItem();
+        deleteButton = new javax.swing.JMenuItem();
         imageMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
 
@@ -165,24 +174,22 @@ public class DrawView extends JFrame {
             }
         });
 
-        jScrollPane1.setViewportBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 350));
-
-        panelItemsList.setModel(createDefaultModel());
-        panelItemsList.setAlignmentY(1.0F);
-        jScrollPane1.setViewportView(panelItemsList);
+        jList1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        setItemListModel();
+        jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
         sidePanelLayout.setHorizontalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(colorChooserButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(sidePanelLayout.createSequentialGroup()
+                        .addComponent(colorChooserButton)
+                        .addGap(0, 147, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
         sidePanelLayout.setVerticalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +197,8 @@ public class DrawView extends JFrame {
                 .addContainerGap()
                 .addComponent(colorChooserButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         fileMenu.setText("File");
@@ -201,6 +209,38 @@ public class DrawView extends JFrame {
         menuBar.add(fileMenu);
 
         editMenu.setText("Edit");
+
+        undoButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
+        undoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/UndoIcon.png"))); // NOI18N
+        undoButton.setText("Undo");
+        undoButton.setToolTipText("");
+        undoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoButtonActionPerformed(evt);
+            }
+        });
+        editMenu.add(undoButton);
+
+        redoButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        redoButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/redo-icon.png"))); // NOI18N
+        redoButton.setText("Redo");
+        redoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redoButtonActionPerformed(evt);
+            }
+        });
+        editMenu.add(redoButton);
+
+        deleteButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0));
+        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/delete-icon.png"))); // NOI18N
+        deleteButton.setText("Delete");
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+        editMenu.add(deleteButton);
+
         menuBar.add(editMenu);
 
         imageMenu.setText("Image");
@@ -242,14 +282,37 @@ public class DrawView extends JFrame {
         toggleColorChooser(newColor);
     }//GEN-LAST:event_clickedColorChooseButton
 
-    private DefaultListModel<ModelShape> createDefaultModel(){
-        DefaultListModel<ModelShape> model = new DefaultListModel<ModelShape>();
+    private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
+        
+    }//GEN-LAST:event_undoButtonActionPerformed
+
+    private void redoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_redoButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        Processor.shapeList.removeIf(ModelShape::isSelected);
+        processor.repaint((DrawingPanel)drawPanel);
+        setItemListModel();
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    public static void setItemListModel(){
+        listModel = new DefaultListModel();
         for (ModelShape shape :
             Processor.shapeList) {
-            model.addElement(shape);
+            listModel.addElement(shape);
         }
-        return model;
+        jList1.setModel(listModel);
     }
+    
+//    private DefaultListModel<ModelShape> createDefaultModel(){
+//        DefaultListModel<ModelShape> model = new DefaultListModel<ModelShape>();
+//        for (ModelShape shape :
+//            Processor.shapeList) {
+//            model.addElement(shape);
+//        }
+//        return model;
+//    }
 
     private void canvasMouseListener(){
         drawPanel.addMouseListener(new MouseAdapter() {

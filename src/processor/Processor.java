@@ -10,7 +10,10 @@ import java.util.ArrayList;
 
 public class Processor {
 
+
   public static RectangleShape markRect = new RectangleShape();
+  public static ModelShape currentlySelectedShape;
+  public static RectangleShape selectedArea = new RectangleShape();
   public static ArrayList<ModelShape> shapeList = new ArrayList<>();
 
   public void reDraw(Graphics g) {
@@ -26,6 +29,7 @@ public class Processor {
       drawShape(g, modelShape);
     }
     drawShape(g, markRect);
+    drawShape(g, selectedArea);
   }
 
   public void drawShape(Graphics2D g, ModelShape item) {

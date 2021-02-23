@@ -12,11 +12,31 @@
       <change beforePath="$PROJECT_DIR$/nbproject/private/private.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/private/private.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/DrawView.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/DrawView.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/DrawView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/DrawView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/entity/button/RectToggleButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity/button/RectToggleButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/entity/button/SelectToggleButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity/button/SelectToggleButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/entity/shape/RectangleShape.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity/shape/RectangleShape.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/entity/shape/common/ModelShape.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity/shape/common/ModelShape.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/processor/Processor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/processor/Processor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1osrkoRr6HmFq4HcWuOfMnUSBxz" />
   <component name="ProjectViewState">
@@ -50,30 +70,42 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.DrawApp" />
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration" cleanupOnStartRun="true">
-    <configuration>C:\Users\Lyubomir Proychev\AppData\Roaming\Subversion</configuration>
+    <configuration>C:\Users\Lubo\AppData\Roaming\Subversion</configuration>
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="SvnFileUrlMappingImpl">
     <option name="myMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="C:\D\уни_things\NetBeans2" />
-          <option name="myCopyRoot" value="C:\D\уни_things\NetBeans2" />
+          <option name="myVcsRoot" value="D:\kuramiqnko trqbva da zavyrsha\NetBeans2" />
+          <option name="myCopyRoot" value="D:\kuramiqnko trqbva da zavyrsha\NetBeans2" />
         </SvnCopyRootSimple>
       </list>
     </option>
     <option name="myMoreRealMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="C:\D\уни_things\NetBeans2" />
-          <option name="myCopyRoot" value="C:\D\уни_things\NetBeans2" />
+          <option name="myVcsRoot" value="D:\kuramiqnko trqbva da zavyrsha\NetBeans2" />
+          <option name="myCopyRoot" value="D:\kuramiqnko trqbva da zavyrsha\NetBeans2" />
         </SvnCopyRootSimple>
       </list>
     </option>
@@ -86,52 +118,19 @@
       <option name="presentableId" value="Default" />
       <updated>1614086284228</updated>
       <workItem from="1614086286675" duration="3869000" />
+      <workItem from="1614107754130" duration="9005000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="2" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1614092950672">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950672" />
-    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1614092950671">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950671" />
-    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1614092950671">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950671" />
-    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1614092950672">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950672" />
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1614092950672">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950672" />
-    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1614092950672">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950672" />
-    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1614092950672">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950672" />
-    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1614092950672">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614092950672" />
+    <option name="version" value="3" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/GUI/DrawView.java</url>
-          <line>170</line>
+          <line>175</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

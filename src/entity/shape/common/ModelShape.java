@@ -6,9 +6,12 @@ import java.awt.Point;
 import java.awt.Shape;
 
 public interface ModelShape extends Shape {
+
   void DrawSelf(Graphics grfx);
   Color getFillColor();
   void setFillColor(Color fillColor);
   Point getLocation();
   void  setLocation(Point point);
+  boolean isSelected();
+  void  setSelected(boolean selected);
 }

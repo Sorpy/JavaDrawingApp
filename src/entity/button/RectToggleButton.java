@@ -90,5 +90,6 @@ public class RectToggleButton extends CustomToggleButtonImpl {
         rect.getX() + "  " + rect.getY() + "  " + rect.getWidth() + "  " + rect.getHeight() + "  "
             + rect.getLocation());
     Processor.shapeList.add(rect);
+    DrawView.setItemListModel();
   }
 }
