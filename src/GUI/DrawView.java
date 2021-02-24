@@ -7,6 +7,7 @@ package GUI;
 
 import entity.DrawingPanel;
 import entity.button.DragSelectToggleButton;
+import entity.button.EllipseToggleButton;
 import entity.button.RectToggleButton;
 import entity.button.SelectToggleButton;
 import entity.button.common.CustomToggleButtonImpl;
@@ -48,6 +49,7 @@ public class DrawView extends JFrame {
     private javax.swing.JToggleButton dragSelectToggleButton;
     private javax.swing.JPanel drawPanel;
     private javax.swing.JMenu editMenu;
+    private javax.swing.JToggleButton ellipseShapeToggleButton;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenu imageMenu;
@@ -101,6 +103,7 @@ public class DrawView extends JFrame {
         selectToggleButton = new SelectToggleButton();
         dragSelectToggleButton = new DragSelectToggleButton();
         rectToggleButton = new RectToggleButton();
+        ellipseShapeToggleButton = new EllipseToggleButton();
         drawPanel = new DrawingPanel(this);
         sidePanel = new javax.swing.JPanel();
         colorChooserButton = new javax.swing.JButton();
@@ -146,6 +149,14 @@ public class DrawView extends JFrame {
         rectToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         rectToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         toolBar.add(rectToggleButton);
+
+        buttonGroup.add(ellipseShapeToggleButton);
+        ellipseShapeToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/RectangleTool.png"))); // NOI18N
+        ellipseShapeToggleButton.setToolTipText("Draw Elipse");
+        ellipseShapeToggleButton.setFocusable(false);
+        ellipseShapeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        ellipseShapeToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        toolBar.add(ellipseShapeToggleButton);
 
         drawPanel.setBackground(new java.awt.Color(255, 255, 255));
 

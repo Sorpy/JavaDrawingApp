@@ -35,14 +35,14 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
   @Override
   public void onPressFunction(MouseEvent e) {
     super.onPressFunction(e);
-    if (selectedItem!=null) {
-      selectedItem.setSelected(false);
-      selectedItem = null;
+    if (getSelectedItem()!=null) {
+      getSelectedItem().setSelected(false);
+      setSelectedItem(null);
     }
     setSelectedItem(containsPoint(e.getPoint()));
     if (getSelectedItem() != null) {
       setLastLocation(e.getPoint());
-      Processor.currentlySelectedShape = getSelectedItem();
+      //Processor.currentlySelectedShape = getSelectedItem();
     }
   }
 
@@ -73,14 +73,10 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
   @Override
   public void onDragFunction(MouseEvent e) {
     super.onDragFunction(e);
-    if (selectedItem != null) {
-//      Processor.selectedArea.setBounds(selectedItem.getBounds().x -1,
-//          selectedItem.getBounds().y +1,
-//          selectedItem.getBounds().x +1,
-//          selectedItem.getBounds().x -1);
-//      Processor.selectedArea.setBorder(dashed);
+    if (getSelectedItem() != null) {
       translateTo(e.getPoint());
       setLastLocation(e.getPoint());
+      System.out.println(selectedItem.getLocation());
     }
   }
 
@@ -91,10 +87,11 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
 
   public ModelShape containsPoint(Point point) {
     ModelShape currentLastShape = null;
-    for (ModelShape shape : Processor.shapeList) {
-      if (shape.contains(point)) {
-        currentLastShape = shape;
+    for( int i = Processor.shapeList.size();i-->0;){
+      if (Processor.shapeList.get(i).contains(point)) {
+        currentLastShape = Processor.shapeList.get(i);
         currentLastShape.setSelected(true);
+        break;
       }
     }
     return currentLastShape;
@@ -105,9 +102,9 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
       selectedItem.setLocation(new Point(selectedItem.getLocation().x + p.x - lastLocation.x,
           selectedItem.getLocation().y + p.y - lastLocation.y));
       lastLocation = p;
-
-      Processor.selectedArea.setLocation(new Point(selectedItem.getLocation().x + p.x - lastLocation.x,
-          selectedItem.getLocation().y + p.y - lastLocation.y));
+//
+//      Processor.selectedArea.setLocation(new Point(selectedItem.getLocation().x + p.x - lastLocation.x,
+//          selectedItem.getLocation().y + p.y - lastLocation.y));
     }
   }
 }

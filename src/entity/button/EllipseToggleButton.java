@@ -2,15 +2,15 @@ package entity.button;
 
 import GUI.DrawView;
 import entity.button.common.CustomToggleButtonImpl;
-import entity.shape.RectangleShape;
+import entity.shape.EllipseShape;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import processor.Processor;
 
-public class RectToggleButton extends CustomToggleButtonImpl {
-  private Point startPoint;
+public class EllipseToggleButton extends CustomToggleButtonImpl{
 
+  private Point startPoint;
 
   @Override
   public void onClickFunction(MouseEvent e) {
@@ -26,8 +26,8 @@ public class RectToggleButton extends CustomToggleButtonImpl {
   @Override
   public void onReleaseFunction(MouseEvent e) {
     super.onReleaseFunction(e);
-    drawRectangle(startPoint.x,startPoint.y,e.getX(),e.getY());
-    Processor.markRect.setBounds(0,0,0,0);
+    drawEllipse(startPoint.x,startPoint.y,e.getX(),e.getY());
+    Processor.markEllipse = new EllipseShape();
   }
 
   @Override
@@ -51,12 +51,14 @@ public class RectToggleButton extends CustomToggleButtonImpl {
     makeSelection(startPoint.x,startPoint.y,e.getX(),e.getY());
   }
 
+
+
   @Override
   public void onMoveFunction(MouseEvent e) {
     super.onMoveFunction(e);
   }
 
-  public void makeSelection(int x, int y, int width, int height) {
+  private void makeSelection(int x, int y, int width, int height) {
     if (x > width) {
       int temp = x;
       x = width;
@@ -68,11 +70,11 @@ public class RectToggleButton extends CustomToggleButtonImpl {
       height = temp;
     }
 
-    Processor.markRect.setBounds(x, y, width - x, height - y);
-    Processor.markRect.setFillColor(new Color(105, 119, 172, 255));
+    Processor.markEllipse.setFrame(x,y,width-x,height-y);
+    Processor.markEllipse.setFillColor(new Color(105, 119, 172, 255));
   }
 
-  public void drawRectangle(int x, int y, int width, int height) {
+  private void drawEllipse(int x, int y, int width, int height) {
     if (x > width) {
       int temp = x;
       x = width;
@@ -84,12 +86,9 @@ public class RectToggleButton extends CustomToggleButtonImpl {
       height = temp;
     }
 
-    RectangleShape rect = new RectangleShape(x, y, width - x, height - y);
-    rect.setFillColor(DrawView.currentColor);
-    System.out.println(
-        rect.getX() + "  " + rect.getY() + "  " + rect.getWidth() + "  " + rect.getHeight() + "  "
-            + rect.getLocation());
-    Processor.shapeList.add(rect);
+    EllipseShape ellipse = new EllipseShape(x,y,width-x,height-y);
+    ellipse.setFillColor(DrawView.currentColor);
+    Processor.shapeList.add(ellipse);
     DrawView.setItemListModel();
   }
 }

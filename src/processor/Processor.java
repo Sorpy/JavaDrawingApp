@@ -1,6 +1,7 @@
 package processor;
 
 import entity.DrawingPanel;
+import entity.shape.EllipseShape;
 import entity.shape.RectangleShape;
 import entity.shape.common.ModelShape;
 import java.awt.Graphics;
@@ -12,7 +13,7 @@ public class Processor {
 
 
   public static RectangleShape markRect = new RectangleShape();
-  public static ModelShape currentlySelectedShape;
+  public static EllipseShape markEllipse= new EllipseShape();
   public static RectangleShape selectedArea = new RectangleShape();
   public static ArrayList<ModelShape> shapeList = new ArrayList<>();
 
@@ -30,6 +31,7 @@ public class Processor {
     }
     drawShape(g, markRect);
     drawShape(g, selectedArea);
+    drawShape(g,markEllipse);
   }
 
   public void drawShape(Graphics2D g, ModelShape item) {

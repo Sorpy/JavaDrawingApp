@@ -36,6 +36,13 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
   @Override
   public void onPressFunction(MouseEvent e) {
     super.onPressFunction(e);
+    if (!selectedShapeList.isEmpty() && containsPoint(e.getPoint())) {
+      setLastLocation(e.getPoint());
+    }else {
+      selectedShapeList.forEach(shape -> shape.setSelected(false));
+      selectedShapeList = new ArrayList<>();
+      setLastLocation(null);
+    }
     if (!selected) {
       startPoint = e.getPoint();
     }else {
@@ -47,14 +54,13 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
   @Override
   public void onReleaseFunction(MouseEvent e) {
     super.onReleaseFunction(e);
-
-    if (selected){
-      selectedShapeList = new ArrayList<>();
-      setLastLocation(null);
+    if (!selected){
+      selectedShapeList = findIntersect();
     }
-    selectedShapeList = findIntersect();
-    //setLastLocation(e.getPoint());// get the center or edge of selected elements
     selected = selectedShapeList != null && !selectedShapeList.isEmpty();
+    if (selected){
+      selectedShapeList.forEach(modelShape -> modelShape.setSelected(true));
+    }
 
   }
 
@@ -76,11 +82,13 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
   @Override
   public void onDragFunction(MouseEvent e) {
     super.onDragFunction(e);
+    if(selected){
+      translateTo(e.getPoint());
+      setLastLocation(e.getPoint());
+    }
     if (!selected) {
       makeSelection(startPoint.x, startPoint.y, e.getX(), e.getY());
     }
-    translateTo(e.getPoint());
-    setLastLocation(e.getPoint());
   }
 
   @Override
@@ -105,36 +113,18 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
   }
 
   public List<ModelShape> findIntersect() {
-    List<ModelShape> shapeList = Processor.shapeList.stream()
+    return Processor.shapeList.stream()
         .filter(shape -> shape.intersects(Processor.markRect))
         .collect(Collectors.toList());
-    return shapeList;
   }
 
-  private void findEdges(List<ModelShape> returnShape) {
-    if (returnShape != null && !returnShape.isEmpty()){
-      topLeftPoint = new Point((int) returnShape.get(0).getBounds().getX(),
-                               (int) returnShape.get(0).getBounds().getY());
-
-      bottomRightPoint = new Point(
-          ((int) returnShape.get(0).getBounds().getHeight() + (int)topLeftPoint.getX()),
-          ((int) returnShape.get(0).getBounds().getHeight()) + (int)topLeftPoint.getY());
-
-      for (ModelShape shape : returnShape) {
-        if (shape.getBounds().getX() < topLeftPoint.getX()) {
-          topLeftPoint.x = (int) shape.getBounds().getX();
-        }
-        if (shape.getBounds().getY() < topLeftPoint.getY()) {
-          topLeftPoint.y = (int) shape.getBounds().getY();
-        }
-        if (shape.getBounds().getWidth() < topLeftPoint.getX()) {
-          bottomRightPoint.x = (int) shape.getBounds().getWidth();
-        }
-        if (shape.getBounds().getX() < topLeftPoint.getX()) {
-          bottomRightPoint.y = (int) shape.getBounds().getHeight();
-        }
+  public boolean containsPoint(Point point) {
+    for (ModelShape shape : selectedShapeList) {
+      if (shape.contains(point)){
+        return true;
       }
     }
+    return false;
   }
 
   public void translateTo(Point p) {

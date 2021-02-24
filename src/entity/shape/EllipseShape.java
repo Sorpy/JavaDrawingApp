@@ -6,23 +6,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Stroke;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Ellipse2D;
 
-public class RectangleShape extends Rectangle implements ModelShape {
-
-
+public class EllipseShape extends Ellipse2D.Double implements ModelShape {
 
   private Color fillColor;
   private boolean selected;
 
-  public RectangleShape() {
-  }
+  public EllipseShape(){
 
-  public RectangleShape(int x, int y, int width, int height) {
+  }
+  public EllipseShape(int x, int y, int width, int height) {
     super(x, y, width, height);
   }
+
 
   @Override
   public Color getFillColor() {
@@ -32,6 +29,17 @@ public class RectangleShape extends Rectangle implements ModelShape {
   @Override
   public void setFillColor(Color fillColor) {
     this.fillColor = fillColor;
+  }
+
+  @Override
+  public Point getLocation() {
+    return new Point((int)x,(int)y);
+  }
+
+  @Override
+  public void setLocation(Point point) {
+    this.x = point.getX();
+    this.y = point.getY();
   }
 
   @Override
@@ -46,18 +54,17 @@ public class RectangleShape extends Rectangle implements ModelShape {
 
   @Override
   public void DrawSelf(Graphics g) {
-    Rectangle r = getBounds();
-    g.setColor(getFillColor());
-    g.fillRect(r.x, r.y, r.width, r.height);
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setColor(getFillColor());
+    g2.fill(new Ellipse2D.Double(x,y,width,height));
     if (isSelected()){
-
-       float dash1[] = { 10.0f };
-       BasicStroke dashed = new BasicStroke(1.2f,
+      float dash1[] = { 10.0f };
+      BasicStroke dashed = new BasicStroke(1.2f,
           BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
       Graphics2D graphics2D = (Graphics2D) g;
       graphics2D.setStroke(dashed);
-      graphics2D.setColor(Color.BLACK);
-      graphics2D.drawRect(r.x, r.y, r.width, r.height);
+      g2.setColor(Color.BLACK);
+      g2.draw(new Ellipse2D.Double(x,y,width,height));
     }
   }
 }

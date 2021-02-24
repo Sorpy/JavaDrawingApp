@@ -7,7 +7,7 @@ import java.awt.Shape;
 
 public interface ModelShape extends Shape {
 
-  void DrawSelf(Graphics grfx);
+  void DrawSelf(Graphics g);
   Color getFillColor();
   void setFillColor(Color fillColor);
   Point getLocation();
