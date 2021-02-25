@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 
-public class EllipseShape extends Ellipse2D.Double implements ModelShape {
+public class EllipseShape extends Ellipse2D.Double implements ModelShape,Cloneable {
 
   private Color fillColor;
   private boolean selected;
@@ -50,6 +50,10 @@ public class EllipseShape extends Ellipse2D.Double implements ModelShape {
   @Override
   public void setSelected(boolean selected) {
     this.selected = selected;
+  }
+
+  public Object clone() {
+    return super.clone();
   }
 
   @Override

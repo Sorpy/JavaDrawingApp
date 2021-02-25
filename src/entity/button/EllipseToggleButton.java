@@ -90,5 +90,6 @@ public class EllipseToggleButton extends CustomToggleButtonImpl{
     ellipse.setFillColor(DrawView.currentColor);
     Processor.shapeList.add(ellipse);
     DrawView.setItemListModel();
+    Processor.addToUndoList();
   }
 }

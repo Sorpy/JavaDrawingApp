@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import javax.swing.AbstractButton;
@@ -294,11 +295,36 @@ public class DrawView extends JFrame {
     }//GEN-LAST:event_clickedColorChooseButton
 
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
-        
+        Processor.canvasRedoList.push(Processor.canvasUndoList.pop());
+        if (!Processor.canvasUndoList.empty()) {
+            ArrayList<ModelShape> tempList = new ArrayList<>();
+            for (ModelShape shape : Processor.canvasUndoList.peek()) {
+                ModelShape tempShape = (ModelShape) shape.clone();
+                tempList.add(tempShape);
+            }
+            Processor.shapeList = tempList;
+        }else {
+            Processor.shapeList = new ArrayList<>();
+        }
+
+        processor.repaint((DrawingPanel) drawPanel);
+
+        Processor.canvasUndoList.forEach(System.out::println);
+        setItemListModel();
     }//GEN-LAST:event_undoButtonActionPerformed
 
     private void redoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoButtonActionPerformed
-        // TODO add your handling code here:
+        Processor.canvasUndoList.push(Processor.canvasRedoList.peek());
+        if (!Processor.canvasRedoList.empty()){
+            ArrayList<ModelShape> tempList = new ArrayList<>();
+            for (ModelShape shape : Processor.canvasRedoList.pop()) {
+                ModelShape tempShape = (ModelShape) shape.clone();
+                tempList.add(tempShape);
+            }
+            Processor.shapeList = tempList;
+        }
+        processor.repaint((DrawingPanel) drawPanel);
+        setItemListModel();
     }//GEN-LAST:event_redoButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed

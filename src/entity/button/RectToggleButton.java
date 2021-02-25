@@ -91,5 +91,7 @@ public class RectToggleButton extends CustomToggleButtonImpl {
             + rect.getLocation());
     Processor.shapeList.add(rect);
     DrawView.setItemListModel();
+    System.out.println("currently in redo before addin new one " + Processor.canvasUndoList);
+    Processor.addToUndoList();
   }
 }

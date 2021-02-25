@@ -5,8 +5,9 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Shape;
 
-public interface ModelShape extends Shape {
+public interface ModelShape extends Shape,Cloneable {
 
+  public Object clone();
   void DrawSelf(Graphics g);
   Color getFillColor();
   void setFillColor(Color fillColor);

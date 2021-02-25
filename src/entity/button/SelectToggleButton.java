@@ -52,7 +52,7 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
   public void onReleaseFunction(MouseEvent e) {
     super.onReleaseFunction(e);
     setLastLocation(null);
-
+    Processor.addToUndoList();
   }
 
   @Override
@@ -73,10 +73,10 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
   @Override
   public void onDragFunction(MouseEvent e) {
     super.onDragFunction(e);
+
     if (getSelectedItem() != null) {
       translateTo(e.getPoint());
       setLastLocation(e.getPoint());
-      System.out.println(selectedItem.getLocation());
     }
   }
 

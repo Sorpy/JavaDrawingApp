@@ -10,7 +10,7 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 
-public class RectangleShape extends Rectangle implements ModelShape {
+public class RectangleShape extends Rectangle implements ModelShape,Cloneable {
 
 
 
@@ -42,6 +42,10 @@ public class RectangleShape extends Rectangle implements ModelShape {
   @Override
   public void setSelected(boolean selected) {
     this.selected = selected;
+  }
+
+  public Object clone() {
+    return super.clone();
   }
 
   @Override

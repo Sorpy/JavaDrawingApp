@@ -56,6 +56,8 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
     super.onReleaseFunction(e);
     if (!selected){
       selectedShapeList = findIntersect();
+    }else {
+      Processor.addToUndoList();
     }
     selected = selectedShapeList != null && !selectedShapeList.isEmpty();
     if (selected){
