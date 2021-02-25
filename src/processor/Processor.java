@@ -47,8 +47,12 @@ public class Processor {
       drawShape(g, modelShape);
     }
     drawShape(g, markRect);
-    drawShape(g, selectedArea);
     drawShape(g,markEllipse);
+  }
+
+  public static void deselectAll(){
+    shapeList.forEach(modelShape -> modelShape.setSelected(false));
+    selectedArea=new RectangleShape();
   }
 
   public void drawShape(Graphics2D g, ModelShape item) {

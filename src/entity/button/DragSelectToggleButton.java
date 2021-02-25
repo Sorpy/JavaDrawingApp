@@ -44,6 +44,7 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
       setLastLocation(null);
     }
     if (!selected) {
+      Processor.deselectAll();
       startPoint = e.getPoint();
     }else {
       setLastLocation(e.getPoint());

@@ -7,6 +7,7 @@ package processor;
 
 import GUI.DrawView;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 /**
  *
@@ -22,8 +23,9 @@ public class DrawApp {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                  UIManager.put("Slider.onlyLeftMouseButtonDrag", Boolean.TRUE);
                     break;
                 }
             }

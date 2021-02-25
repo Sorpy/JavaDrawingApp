@@ -20,6 +20,7 @@ public class RectToggleButton extends CustomToggleButtonImpl {
   @Override
   public void onPressFunction(MouseEvent e) {
     super.onPressFunction(e);
+    Processor.deselectAll();
     startPoint = e.getPoint();
   }
 

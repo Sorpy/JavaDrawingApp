@@ -11,15 +11,21 @@ import entity.button.EllipseToggleButton;
 import entity.button.RectToggleButton;
 import entity.button.SelectToggleButton;
 import entity.button.common.CustomToggleButtonImpl;
+import entity.shape.CustomShape;
+import entity.shape.RectangleShape;
 import entity.shape.common.ModelShape;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -31,6 +37,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JSlider;
+import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import processor.Processor;
@@ -45,6 +54,7 @@ public class DrawView extends JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
+    private javax.swing.JPopupMenu canvasRightClickPopup;
     private javax.swing.JButton colorChooserButton;
     private javax.swing.JMenuItem deleteButton;
     private javax.swing.JToggleButton dragSelectToggleButton;
@@ -60,6 +70,10 @@ public class DrawView extends JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JToggleButton rectToggleButton;
     private javax.swing.JMenuItem redoButton;
+    private javax.swing.JMenuItem rightClickDeleteMenu;
+    private javax.swing.JMenuItem rightClickRotateMenu;
+    private javax.swing.JButton rotateButton;
+    private javax.swing.JSlider rotateSlider;
     private javax.swing.JToggleButton selectToggleButton;
     private javax.swing.JPanel sidePanel;
     private javax.swing.JToolBar toolBar;
@@ -88,6 +102,12 @@ public class DrawView extends JFrame {
             }
         });
         canvasMouseListener();
+
+        AffineTransform tx = new AffineTransform();
+        tx.rotate(0.5);
+        java.awt.Rectangle shape = new Rectangle(1, 1, 1, 1);
+        Shape newShape = tx.createTransformedShape((shape));
+
     }
 
     /**
@@ -100,6 +120,10 @@ public class DrawView extends JFrame {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
+        canvasRightClickPopup = new javax.swing.JPopupMenu();
+        rightClickDeleteMenu = new javax.swing.JMenuItem();
+        rightClickRotateMenu = new javax.swing.JMenuItem();
+        rotateSlider = new javax.swing.JSlider();
         toolBar = new javax.swing.JToolBar();
         selectToggleButton = new SelectToggleButton();
         dragSelectToggleButton = new DragSelectToggleButton();
@@ -110,6 +134,7 @@ public class DrawView extends JFrame {
         colorChooserButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
+        rotateButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -119,6 +144,30 @@ public class DrawView extends JFrame {
         deleteButton = new javax.swing.JMenuItem();
         imageMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
+
+        canvasRightClickPopup.setBackground(new java.awt.Color(255, 255, 255));
+        canvasRightClickPopup.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        rightClickDeleteMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/delete-icon.png"))); // NOI18N
+        rightClickDeleteMenu.setText("Delete");
+        rightClickDeleteMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rightClickDeleteMenuAction(evt);
+            }
+        });
+        canvasRightClickPopup.add(rightClickDeleteMenu);
+
+        rightClickRotateMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/rotate-icon.png"))); // NOI18N
+        rightClickRotateMenu.setText("Rotate");
+        rightClickRotateMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rightClickRotateMenuAction(evt);
+            }
+        });
+        canvasRightClickPopup.add(rightClickRotateMenu);
+
+        rotateSlider.setBackground(new java.awt.Color(153, 153, 153));
+        rotateSlider.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         setMinimumSize(new java.awt.Dimension(10, 10));
 
@@ -133,6 +182,11 @@ public class DrawView extends JFrame {
         selectToggleButton.setFocusable(false);
         selectToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         selectToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        selectToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeOtherButtonsActions(evt);
+            }
+        });
         toolBar.add(selectToggleButton);
 
         buttonGroup.add(dragSelectToggleButton);
@@ -141,6 +195,11 @@ public class DrawView extends JFrame {
         dragSelectToggleButton.setFocusable(false);
         dragSelectToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         dragSelectToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        dragSelectToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeOtherButtonsActions(evt);
+            }
+        });
         toolBar.add(dragSelectToggleButton);
 
         buttonGroup.add(rectToggleButton);
@@ -149,6 +208,11 @@ public class DrawView extends JFrame {
         rectToggleButton.setFocusable(false);
         rectToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         rectToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        rectToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeOtherButtonsActions(evt);
+            }
+        });
         toolBar.add(rectToggleButton);
 
         buttonGroup.add(ellipseShapeToggleButton);
@@ -157,15 +221,21 @@ public class DrawView extends JFrame {
         ellipseShapeToggleButton.setFocusable(false);
         ellipseShapeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         ellipseShapeToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        ellipseShapeToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeOtherButtonsActions(evt);
+            }
+        });
         toolBar.add(ellipseShapeToggleButton);
 
         drawPanel.setBackground(new java.awt.Color(255, 255, 255));
+        drawPanel.setComponentPopupMenu(canvasRightClickPopup);
 
         javax.swing.GroupLayout drawPanelLayout = new javax.swing.GroupLayout(drawPanel);
         drawPanel.setLayout(drawPanelLayout);
         drawPanelLayout.setHorizontalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 467, Short.MAX_VALUE)
         );
         drawPanelLayout.setVerticalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,6 +260,13 @@ public class DrawView extends JFrame {
         setItemListModel();
         jScrollPane2.setViewportView(jList1);
 
+        rotateButton.setText("jButton1");
+        rotateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rotateButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
         sidePanelLayout.setHorizontalGroup(
@@ -197,10 +274,12 @@ public class DrawView extends JFrame {
             .addGroup(sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(sidePanelLayout.createSequentialGroup()
-                        .addComponent(colorChooserButton)
-                        .addGap(0, 147, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(colorChooserButton)
+                            .addComponent(rotateButton))
+                        .addGap(0, 107, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         sidePanelLayout.setVerticalGroup(
@@ -209,6 +288,8 @@ public class DrawView extends JFrame {
                 .addContainerGap()
                 .addComponent(colorChooserButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(rotateButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -333,6 +414,35 @@ public class DrawView extends JFrame {
         setItemListModel();
     }//GEN-LAST:event_deleteButtonActionPerformed
 
+    private void removeOtherButtonsActions(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeOtherButtonsActions
+        Processor.deselectAll();
+        Processor.markRect = new RectangleShape();
+        processor.repaint((DrawingPanel)drawPanel);
+    }//GEN-LAST:event_removeOtherButtonsActions
+
+    private void rightClickDeleteMenuAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightClickDeleteMenuAction
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rightClickDeleteMenuAction
+
+    private void rightClickRotateMenuAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightClickRotateMenuAction
+        rotateSlider.setLocation(50,50);
+        rotateSlider.setVisible(true);
+        drawPanel.add(rotateSlider);
+        processor.repaint((DrawingPanel)drawPanel);
+
+    }//GEN-LAST:event_rightClickRotateMenuAction
+
+    private void rotateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotateButtonActionPerformed
+        AffineTransform tx = new AffineTransform();
+        ModelShape shape = Processor.shapeList.get(0);
+        tx.rotate(0.5,shape.getBounds2D().getX()+(shape.getBounds2D().getWidth()/2),shape.getBounds2D().getY()+(shape.getBounds2D().getHeight()/2));
+
+
+        CustomShape path2D = new CustomShape(shape,tx);
+        Processor.shapeList.set(0,path2D);
+        processor.repaint((DrawingPanel)drawPanel);
+    }//GEN-LAST:event_rotateButtonActionPerformed
+
     public static void setItemListModel(){
         listModel = new DefaultListModel();
         for (ModelShape shape :
@@ -341,15 +451,7 @@ public class DrawView extends JFrame {
         }
         jList1.setModel(listModel);
     }
-    
-//    private DefaultListModel<ModelShape> createDefaultModel(){
-//        DefaultListModel<ModelShape> model = new DefaultListModel<ModelShape>();
-//        for (ModelShape shape :
-//            Processor.shapeList) {
-//            model.addElement(shape);
-//        }
-//        return model;
-//    }
+
 
     private void canvasMouseListener(){
         drawPanel.addMouseListener(new MouseAdapter() {

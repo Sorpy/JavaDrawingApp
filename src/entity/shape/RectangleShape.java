@@ -44,6 +44,7 @@ public class RectangleShape extends Rectangle implements ModelShape,Cloneable {
     this.selected = selected;
   }
 
+
   public Object clone() {
     return super.clone();
   }
