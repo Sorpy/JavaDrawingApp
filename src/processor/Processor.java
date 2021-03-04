@@ -1,37 +1,64 @@
 package processor;
 
+import GUI.DrawView;
 import entity.DrawingPanel;
-import entity.shape.EllipseShape;
-import entity.shape.RectangleShape;
-import entity.shape.common.ModelShape;
+import entity.shape.PathShape;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D.Double;
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class Processor {
 
 
-  public static RectangleShape markRect = new RectangleShape();
-  public static EllipseShape markEllipse= new EllipseShape();
-  public static RectangleShape selectedArea = new RectangleShape();
-  public static ArrayList<ModelShape> shapeList = new ArrayList<>();
-  public static Stack<ArrayList<ModelShape>> canvasUndoList = new Stack<>();
-  public static Stack<ArrayList<ModelShape>> canvasRedoList = new Stack<>();
+  public static PathShape markRect;
+  public static PathShape markEllipse;
+  public static ArrayList<PathShape> shapeList = new ArrayList<>();
+  public static Stack<ArrayList<PathShape>> canvasUndoList = new Stack<>();
+  public static Stack<ArrayList<PathShape>> canvasRedoList = new Stack<>();
 
   public static void addToUndoList() {
-//    if (canvasUndoList.size() >= 10){
-//      canvasUndoList.remove(0);
-//      System.out.println("itemRemoved");
-//  }
-    ArrayList<ModelShape> tempList = new ArrayList<>();
-    for (ModelShape shape : shapeList) {
-      ModelShape tempShape = (ModelShape) shape.clone();
-      tempList.add(tempShape);
-    }
+    if (canvasUndoList.size() >= 10){
+      canvasUndoList.remove(0);
+      System.out.println("itemRemoved");
+  }
+    ArrayList<PathShape> tempList = new ArrayList<>();
+    for (PathShape shape : shapeList) {
+      PathShape tempShape =shape.clonePath();
+      tempShape.setFillColor(shape.getFillColor());
+        tempList.add(tempShape);
+      }
     canvasUndoList.push(tempList);
     canvasUndoList.forEach(System.out::println);
+  }
+
+  public static void createShape(Shape shape, AffineTransform affineTransform){
+    PathShape pathShape =
+        new PathShape(shape,
+            affineTransform,
+            DrawView.currentColor);
+    Processor.shapeList.add(pathShape);
+  }
+
+  public static void makeSelection(int x, int y, int width, int height,Color color) {
+    if (x > width) {
+      int temp = x;
+      x = width;
+      width = temp;
+    }
+    if (y > height) {
+      int temp = y;
+      y = height;
+      height = temp;
+    }
+
+    Processor.markRect = new PathShape(new Double(x, y, width - x, height - y), new AffineTransform());
+    Processor.markRect.setFillColor(color);
   }
 
   public void reDraw(Graphics g) {
@@ -43,8 +70,8 @@ public class Processor {
   }
 
   public void draw(Graphics2D g) {
-    for (ModelShape modelShape : shapeList) {
-      drawShape(g, modelShape);
+    for (PathShape pathShape : shapeList) {
+      drawShape(g, pathShape);
     }
     drawShape(g, markRect);
     drawShape(g,markEllipse);
@@ -52,11 +79,12 @@ public class Processor {
 
   public static void deselectAll(){
     shapeList.forEach(modelShape -> modelShape.setSelected(false));
-    selectedArea=new RectangleShape();
   }
 
-  public void drawShape(Graphics2D g, ModelShape item) {
-    item.DrawSelf(g);
+  public void drawShape(Graphics2D g, PathShape item) {
+    if (item!=null) {
+      item.DrawSelf(g);
+    }
   }
 
 

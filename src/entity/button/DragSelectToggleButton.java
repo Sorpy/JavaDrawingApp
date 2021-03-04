@@ -2,10 +2,11 @@ package entity.button;
 
 import entity.button.common.CustomToggleButton;
 import entity.button.common.CustomToggleButtonImpl;
-import entity.shape.common.ModelShape;
+import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,12 +14,12 @@ import processor.Processor;
 
 public class DragSelectToggleButton extends CustomToggleButtonImpl implements CustomToggleButton {
 
-  private boolean selected =false;
+  private boolean selected = false;
   private Point startPoint;
   private Point lastLocation;
   private Point topLeftPoint;
   private Point bottomRightPoint;
-  private List<ModelShape> selectedShapeList = new ArrayList<>();
+  private List<PathShape> selectedShapeList = new ArrayList<>();
 
   public Point getLastLocation() {
     return lastLocation;
@@ -38,7 +39,7 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
     super.onPressFunction(e);
     if (!selectedShapeList.isEmpty() && containsPoint(e.getPoint())) {
       setLastLocation(e.getPoint());
-    }else {
+    } else {
       selectedShapeList.forEach(shape -> shape.setSelected(false));
       selectedShapeList = new ArrayList<>();
       setLastLocation(null);
@@ -46,22 +47,22 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
     if (!selected) {
       Processor.deselectAll();
       startPoint = e.getPoint();
-    }else {
+    } else {
       setLastLocation(e.getPoint());
     }
-    Processor.markRect.setBounds(0,0,0,0);
+    Processor.markRect = null;
   }
 
   @Override
   public void onReleaseFunction(MouseEvent e) {
     super.onReleaseFunction(e);
-    if (!selected){
+    if (!selected) {
       selectedShapeList = findIntersect();
-    }else {
+    } else {
       Processor.addToUndoList();
     }
     selected = selectedShapeList != null && !selectedShapeList.isEmpty();
-    if (selected){
+    if (selected) {
       selectedShapeList.forEach(modelShape -> modelShape.setSelected(true));
     }
 
@@ -85,12 +86,15 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
   @Override
   public void onDragFunction(MouseEvent e) {
     super.onDragFunction(e);
-    if(selected){
+    if (selected) {
       translateTo(e.getPoint());
       setLastLocation(e.getPoint());
     }
     if (!selected) {
-      makeSelection(startPoint.x, startPoint.y, e.getX(), e.getY());
+      Processor.makeSelection(startPoint.x, startPoint.y,
+          e.getX(), e.getY(),
+          new Color(105, 119, 172, 25)
+      );
     }
   }
 
@@ -99,31 +103,15 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
     super.onMoveFunction(e);
   }
 
-  public void makeSelection(int x, int y, int width, int height) {
-    if (x > width) {
-      int temp = x;
-      x = width;
-      width = temp;
-    }
-    if (y > height) {
-      int temp = y;
-      y = height;
-      height = temp;
-    }
-
-    Processor.markRect.setBounds(x, y, width - x, height - y);
-    Processor.markRect.setFillColor(new Color(105, 119, 172, 25));
-  }
-
-  public List<ModelShape> findIntersect() {
+  public List<PathShape> findIntersect() {
     return Processor.shapeList.stream()
-        .filter(shape -> shape.intersects(Processor.markRect))
+        .filter(shape -> shape.intersects(Processor.markRect.getBounds2D()))
         .collect(Collectors.toList());
   }
 
   public boolean containsPoint(Point point) {
-    for (ModelShape shape : selectedShapeList) {
-      if (shape.contains(point)){
+    for (PathShape shape : selectedShapeList) {
+      if (shape.contains(point)) {
         return true;
       }
     }
@@ -132,10 +120,14 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
 
   public void translateTo(Point p) {
     if (selectedShapeList != null && !selectedShapeList.isEmpty()) {
-      selectedShapeList.forEach(modelShape -> modelShape.setLocation(new Point(
-          modelShape.getLocation().x +p.x - lastLocation.x,
-          modelShape.getLocation().y + p.y - lastLocation.y))
-      );
+      for (PathShape shape : selectedShapeList) {
+        AffineTransform affineTransform = new AffineTransform();
+        affineTransform.translate(p.x - lastLocation.x,
+            p.y - lastLocation.y);
+        shape.transform(affineTransform);
+        shape.getAffineTransform().translate(p.x - lastLocation.x,
+            p.y - lastLocation.y);
+      }
       lastLocation = p;
     }
   }

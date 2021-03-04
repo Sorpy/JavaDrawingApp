@@ -2,10 +2,13 @@ package entity.button;
 
 import GUI.DrawView;
 import entity.button.common.CustomToggleButtonImpl;
-import entity.shape.RectangleShape;
+import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D.Double;
 import processor.Processor;
 
 public class RectToggleButton extends CustomToggleButtonImpl {
@@ -28,7 +31,7 @@ public class RectToggleButton extends CustomToggleButtonImpl {
   public void onReleaseFunction(MouseEvent e) {
     super.onReleaseFunction(e);
     drawRectangle(startPoint.x,startPoint.y,e.getX(),e.getY());
-    Processor.markRect.setBounds(0,0,0,0);
+    Processor.markRect = null;
   }
 
   @Override
@@ -49,28 +52,16 @@ public class RectToggleButton extends CustomToggleButtonImpl {
   @Override
   public void onDragFunction(MouseEvent e) {
     super.onDragFunction(e);
-    makeSelection(startPoint.x,startPoint.y,e.getX(),e.getY());
+    Processor.makeSelection(
+        startPoint.x,startPoint.y,
+        e.getX(),e.getY(),
+        new Color(105, 119, 172, 150)
+    );
   }
 
   @Override
   public void onMoveFunction(MouseEvent e) {
     super.onMoveFunction(e);
-  }
-
-  public void makeSelection(int x, int y, int width, int height) {
-    if (x > width) {
-      int temp = x;
-      x = width;
-      width = temp;
-    }
-    if (y > height) {
-      int temp = y;
-      y = height;
-      height = temp;
-    }
-
-    Processor.markRect.setBounds(x, y, width - x, height - y);
-    Processor.markRect.setFillColor(new Color(105, 119, 172, 255));
   }
 
   public void drawRectangle(int x, int y, int width, int height) {
@@ -85,14 +76,9 @@ public class RectToggleButton extends CustomToggleButtonImpl {
       height = temp;
     }
 
-    RectangleShape rect = new RectangleShape(x, y, width - x, height - y);
-    rect.setFillColor(DrawView.currentColor);
-    System.out.println(
-        rect.getX() + "  " + rect.getY() + "  " + rect.getWidth() + "  " + rect.getHeight() + "  "
-            + rect.getLocation());
-    Processor.shapeList.add(rect);
+    AffineTransform affineTransform = new AffineTransform();
+    Processor.createShape(new Rectangle(x, y, width - x, height - y),affineTransform);
     DrawView.setItemListModel();
-    System.out.println("currently in redo before addin new one " + Processor.canvasUndoList);
     Processor.addToUndoList();
   }
 }

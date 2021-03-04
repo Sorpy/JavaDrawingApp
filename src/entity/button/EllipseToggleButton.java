@@ -2,10 +2,13 @@ package entity.button;
 
 import GUI.DrawView;
 import entity.button.common.CustomToggleButtonImpl;
-import entity.shape.EllipseShape;
+import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Ellipse2D.Double;
 import processor.Processor;
 
 public class EllipseToggleButton extends CustomToggleButtonImpl{
@@ -28,7 +31,7 @@ public class EllipseToggleButton extends CustomToggleButtonImpl{
   public void onReleaseFunction(MouseEvent e) {
     super.onReleaseFunction(e);
     drawEllipse(startPoint.x,startPoint.y,e.getX(),e.getY());
-    Processor.markEllipse = new EllipseShape();
+    Processor.markEllipse = null;
   }
 
   @Override
@@ -71,7 +74,7 @@ public class EllipseToggleButton extends CustomToggleButtonImpl{
       height = temp;
     }
 
-    Processor.markEllipse.setFrame(x,y,width-x,height-y);
+    Processor.markEllipse = new PathShape(new Double(x,y,width-x,height-y), new AffineTransform());
     Processor.markEllipse.setFillColor(new Color(105, 119, 172, 255));
   }
 
@@ -87,9 +90,10 @@ public class EllipseToggleButton extends CustomToggleButtonImpl{
       height = temp;
     }
 
-    EllipseShape ellipse = new EllipseShape(x,y,width-x,height-y);
-    ellipse.setFillColor(DrawView.currentColor);
-    Processor.shapeList.add(ellipse);
+
+
+    AffineTransform affineTransform = new AffineTransform();
+    Processor.createShape(new Ellipse2D.Double(x,y,width-x,height-y),affineTransform);
     DrawView.setItemListModel();
     Processor.addToUndoList();
   }

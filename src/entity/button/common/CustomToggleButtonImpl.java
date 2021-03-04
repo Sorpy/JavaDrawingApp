@@ -1,10 +1,6 @@
 package entity.button.common;
 
-import entity.shape.RectangleShape;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RectangularShape;
-import javax.swing.AbstractButton;
 import javax.swing.JToggleButton;
 
 public abstract class CustomToggleButtonImpl extends JToggleButton implements CustomToggleButton {

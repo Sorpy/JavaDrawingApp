@@ -11,38 +11,29 @@ import entity.button.EllipseToggleButton;
 import entity.button.RectToggleButton;
 import entity.button.SelectToggleButton;
 import entity.button.common.CustomToggleButtonImpl;
-import entity.shape.CustomShape;
-import entity.shape.RectangleShape;
-import entity.shape.common.ModelShape;
+import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JSlider;
-import javax.swing.JToggleButton;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import processor.Processor;
+import processor.RotateProcessor;
 
 /**
  *
@@ -71,9 +62,8 @@ public class DrawView extends JFrame {
     private javax.swing.JToggleButton rectToggleButton;
     private javax.swing.JMenuItem redoButton;
     private javax.swing.JMenuItem rightClickDeleteMenu;
-    private javax.swing.JMenuItem rightClickRotateMenu;
-    private javax.swing.JButton rotateButton;
     private javax.swing.JSlider rotateSlider;
+    private javax.swing.JLabel rotateSliderLabel;
     private javax.swing.JToggleButton selectToggleButton;
     private javax.swing.JPanel sidePanel;
     private javax.swing.JToolBar toolBar;
@@ -122,8 +112,6 @@ public class DrawView extends JFrame {
         buttonGroup = new javax.swing.ButtonGroup();
         canvasRightClickPopup = new javax.swing.JPopupMenu();
         rightClickDeleteMenu = new javax.swing.JMenuItem();
-        rightClickRotateMenu = new javax.swing.JMenuItem();
-        rotateSlider = new javax.swing.JSlider();
         toolBar = new javax.swing.JToolBar();
         selectToggleButton = new SelectToggleButton();
         dragSelectToggleButton = new DragSelectToggleButton();
@@ -134,7 +122,8 @@ public class DrawView extends JFrame {
         colorChooserButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
-        rotateButton = new javax.swing.JButton();
+        rotateSlider = new javax.swing.JSlider();
+        rotateSliderLabel = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -156,18 +145,6 @@ public class DrawView extends JFrame {
             }
         });
         canvasRightClickPopup.add(rightClickDeleteMenu);
-
-        rightClickRotateMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/rotate-icon.png"))); // NOI18N
-        rightClickRotateMenu.setText("Rotate");
-        rightClickRotateMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rightClickRotateMenuAction(evt);
-            }
-        });
-        canvasRightClickPopup.add(rightClickRotateMenu);
-
-        rotateSlider.setBackground(new java.awt.Color(153, 153, 153));
-        rotateSlider.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         setMinimumSize(new java.awt.Dimension(10, 10));
 
@@ -235,11 +212,11 @@ public class DrawView extends JFrame {
         drawPanel.setLayout(drawPanelLayout);
         drawPanelLayout.setHorizontalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 467, Short.MAX_VALUE)
+            .addGap(0, 483, Short.MAX_VALUE)
         );
         drawPanelLayout.setVerticalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         sidePanel.setBackground(new java.awt.Color(153, 153, 153));
@@ -260,12 +237,21 @@ public class DrawView extends JFrame {
         setItemListModel();
         jScrollPane2.setViewportView(jList1);
 
-        rotateButton.setText("jButton1");
-        rotateButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rotateButtonActionPerformed(evt);
+        rotateSlider.setMajorTickSpacing(60);
+        rotateSlider.setMaximum(180);
+        rotateSlider.setMinimum(-180);
+        rotateSlider.setMinorTickSpacing(15);
+        rotateSlider.setPaintLabels(true);
+        rotateSlider.setPaintTicks(true);
+        rotateSlider.setValue(0);
+        rotateSlider.setName("rotate"); // NOI18N
+        rotateSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rotateSliderStateChanged(evt);
             }
         });
+
+        rotateSliderLabel.setText("Rotate Slider");
 
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
@@ -275,20 +261,25 @@ public class DrawView extends JFrame {
                 .addContainerGap()
                 .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(sidePanelLayout.createSequentialGroup()
-                        .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(colorChooserButton)
-                            .addComponent(rotateButton))
-                        .addGap(0, 107, Short.MAX_VALUE)))
+                    .addComponent(colorChooserButton)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(rotateSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .addGroup(sidePanelLayout.createSequentialGroup()
+                .addGap(89, 89, 89)
+                .addComponent(rotateSliderLabel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         sidePanelLayout.setVerticalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(colorChooserButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(rotateButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
+                .addComponent(rotateSliderLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rotateSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -351,10 +342,10 @@ public class DrawView extends JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(drawPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE))
+                    .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,7 +353,9 @@ public class DrawView extends JFrame {
                 .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(sidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(drawPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(1, 1, 1))
         );
@@ -378,9 +371,10 @@ public class DrawView extends JFrame {
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
         Processor.canvasRedoList.push(Processor.canvasUndoList.pop());
         if (!Processor.canvasUndoList.empty()) {
-            ArrayList<ModelShape> tempList = new ArrayList<>();
-            for (ModelShape shape : Processor.canvasUndoList.peek()) {
-                ModelShape tempShape = (ModelShape) shape.clone();
+            ArrayList<PathShape> tempList = new ArrayList<>();
+            for (PathShape shape : Processor.canvasUndoList.peek()) {
+                PathShape tempShape = shape.clonePath();
+                tempShape.setFillColor(shape.getFillColor());
                 tempList.add(tempShape);
             }
             Processor.shapeList = tempList;
@@ -397,9 +391,10 @@ public class DrawView extends JFrame {
     private void redoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoButtonActionPerformed
         Processor.canvasUndoList.push(Processor.canvasRedoList.peek());
         if (!Processor.canvasRedoList.empty()){
-            ArrayList<ModelShape> tempList = new ArrayList<>();
-            for (ModelShape shape : Processor.canvasRedoList.pop()) {
-                ModelShape tempShape = (ModelShape) shape.clone();
+            ArrayList<PathShape> tempList = new ArrayList<>();
+            for (PathShape shape : Processor.canvasRedoList.pop()) {
+                PathShape tempShape = shape.clonePath();
+                tempShape.setFillColor(shape.getFillColor());
                 tempList.add(tempShape);
             }
             Processor.shapeList = tempList;
@@ -409,14 +404,14 @@ public class DrawView extends JFrame {
     }//GEN-LAST:event_redoButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        Processor.shapeList.removeIf(ModelShape::isSelected);
+        Processor.shapeList.removeIf(PathShape::isSelected);
         processor.repaint((DrawingPanel)drawPanel);
         setItemListModel();
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void removeOtherButtonsActions(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeOtherButtonsActions
         Processor.deselectAll();
-        Processor.markRect = new RectangleShape();
+        Processor.markRect = null;
         processor.repaint((DrawingPanel)drawPanel);
     }//GEN-LAST:event_removeOtherButtonsActions
 
@@ -424,29 +419,16 @@ public class DrawView extends JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_rightClickDeleteMenuAction
 
-    private void rightClickRotateMenuAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightClickRotateMenuAction
-        rotateSlider.setLocation(50,50);
-        rotateSlider.setVisible(true);
-        drawPanel.add(rotateSlider);
+    private void rotateSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rotateSliderStateChanged
+        double sliderValue = rotateSlider.getValue();
+        RotateProcessor rotateProcessor = new RotateProcessor();
+        rotateProcessor.rotateShape(sliderValue);
         processor.repaint((DrawingPanel)drawPanel);
-
-    }//GEN-LAST:event_rightClickRotateMenuAction
-
-    private void rotateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotateButtonActionPerformed
-        AffineTransform tx = new AffineTransform();
-        ModelShape shape = Processor.shapeList.get(0);
-        tx.rotate(0.5,shape.getBounds2D().getX()+(shape.getBounds2D().getWidth()/2),shape.getBounds2D().getY()+(shape.getBounds2D().getHeight()/2));
-
-
-        CustomShape path2D = new CustomShape(shape,tx);
-        Processor.shapeList.set(0,path2D);
-        processor.repaint((DrawingPanel)drawPanel);
-    }//GEN-LAST:event_rotateButtonActionPerformed
+    }//GEN-LAST:event_rotateSliderStateChanged
 
     public static void setItemListModel(){
         listModel = new DefaultListModel();
-        for (ModelShape shape :
-            Processor.shapeList) {
+        for (PathShape shape : Processor.shapeList) {
             listModel.addElement(shape);
         }
         jList1.setModel(listModel);

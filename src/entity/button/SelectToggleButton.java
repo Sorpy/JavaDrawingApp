@@ -2,24 +2,23 @@ package entity.button;
 
 import entity.button.common.CustomToggleButton;
 import entity.button.common.CustomToggleButtonImpl;
-import entity.shape.common.ModelShape;
-import java.awt.BasicStroke;
-import java.awt.Color;
+import entity.shape.PathShape;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 import processor.Processor;
+import processor.RotateProcessor;
 
 public class SelectToggleButton extends CustomToggleButtonImpl implements CustomToggleButton {
 
-  private ModelShape selectedItem;
+  private PathShape selectedItem;
   private Point lastLocation;
 
-  public ModelShape getSelectedItem() {
+  public PathShape getSelectedItem() {
     return selectedItem;
   }
 
-  public void setSelectedItem(ModelShape selectedItem) {
+  public void setSelectedItem(PathShape selectedItem) {
     this.selectedItem = selectedItem;
   }
 
@@ -35,17 +34,19 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
   @Override
   public void onPressFunction(MouseEvent e) {
     super.onPressFunction(e);
-    if (getSelectedItem()!=null) {
+    if (getSelectedItem() != null) {
+      //selectedItem.setAffineTransform(new AffineTransform());
       getSelectedItem().setSelected(false);
       setSelectedItem(null);
+      RotateProcessor.currentlyRotatedShape = null;
     }
     setSelectedItem(containsPoint(e.getPoint()));
     if (getSelectedItem() != null) {
       setLastLocation(e.getPoint());
+      RotateProcessor.currentlyRotatedShape =selectedItem;
       //Processor.currentlySelectedShape = getSelectedItem();
     }
   }
-
 
 
   @Override
@@ -77,6 +78,7 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
     if (getSelectedItem() != null) {
       translateTo(e.getPoint());
       setLastLocation(e.getPoint());
+      RotateProcessor.currentlyRotatedShape =selectedItem;
     }
   }
 
@@ -85,11 +87,11 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
     super.onMoveFunction(e);
   }
 
-  public ModelShape containsPoint(Point point) {
-    ModelShape currentLastShape = null;
-    for( int i = Processor.shapeList.size();i-->0;){
+  public PathShape containsPoint(Point point) {
+    PathShape currentLastShape = null;
+    for (int i = Processor.shapeList.size(); i-- > 0; ) {
       if (Processor.shapeList.get(i).contains(point)) {
-        currentLastShape = Processor.shapeList.get(i);
+        currentLastShape = (PathShape) Processor.shapeList.get(i);
         currentLastShape.setSelected(true);
         break;
       }
@@ -99,12 +101,13 @@ public class SelectToggleButton extends CustomToggleButtonImpl implements Custom
 
   private void translateTo(Point p) {
     if (selectedItem != null) {
-      selectedItem.setLocation(new Point(selectedItem.getLocation().x + p.x - lastLocation.x,
-          selectedItem.getLocation().y + p.y - lastLocation.y));
+      AffineTransform affineTransform = new AffineTransform();
+      affineTransform.translate(p.x - lastLocation.x,
+          p.y - lastLocation.y);
+      selectedItem.transform(affineTransform);
+      selectedItem.getAffineTransform().translate(p.x - lastLocation.x,
+          p.y - lastLocation.y);
       lastLocation = p;
-//
-//      Processor.selectedArea.setLocation(new Point(selectedItem.getLocation().x + p.x - lastLocation.x,
-//          selectedItem.getLocation().y + p.y - lastLocation.y));
     }
   }
 }
