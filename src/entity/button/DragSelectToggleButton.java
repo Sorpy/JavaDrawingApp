@@ -1,7 +1,6 @@
 package entity.button;
 
 import entity.button.common.CustomToggleButton;
-import entity.button.common.CustomToggleButtonImpl;
 import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
@@ -10,9 +9,10 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.JToggleButton;
 import processor.Processor;
 
-public class DragSelectToggleButton extends CustomToggleButtonImpl implements CustomToggleButton {
+public class DragSelectToggleButton extends JToggleButton implements CustomToggleButton {
 
   private boolean selected = false;
   private Point startPoint;
@@ -31,12 +31,10 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
 
   @Override
   public void onClickFunction(MouseEvent e) {
-    super.onClickFunction(e);
   }
 
   @Override
   public void onPressFunction(MouseEvent e) {
-    super.onPressFunction(e);
     if (!selectedShapeList.isEmpty() && containsPoint(e.getPoint())) {
       setLastLocation(e.getPoint());
     } else {
@@ -55,7 +53,6 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
 
   @Override
   public void onReleaseFunction(MouseEvent e) {
-    super.onReleaseFunction(e);
     if (!selected) {
       selectedShapeList = findIntersect();
     } else {
@@ -70,22 +67,22 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
 
   @Override
   public void onEnterFunction(MouseEvent e) {
-    super.onEnterFunction(e);
+
   }
 
   @Override
   public void onExitFunction(MouseEvent e) {
-    super.onExitFunction(e);
+
   }
 
   @Override
   public void onWheelMovedFunction(MouseEvent e) {
-    super.onWheelMovedFunction(e);
+
   }
 
   @Override
   public void onDragFunction(MouseEvent e) {
-    super.onDragFunction(e);
+
     if (selected) {
       translateTo(e.getPoint());
       setLastLocation(e.getPoint());
@@ -100,7 +97,7 @@ public class DragSelectToggleButton extends CustomToggleButtonImpl implements Cu
 
   @Override
   public void onMoveFunction(MouseEvent e) {
-    super.onMoveFunction(e);
+
   }
 
   public List<PathShape> findIntersect() {

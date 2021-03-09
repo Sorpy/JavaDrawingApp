@@ -18,6 +18,7 @@ public class Processor {
 
   public static PathShape markRect;
   public static PathShape markEllipse;
+  public static PathShape markLine;
   public static ArrayList<PathShape> shapeList = new ArrayList<>();
   public static Stack<ArrayList<PathShape>> canvasUndoList = new Stack<>();
   public static Stack<ArrayList<PathShape>> canvasRedoList = new Stack<>();
@@ -30,18 +31,22 @@ public class Processor {
     ArrayList<PathShape> tempList = new ArrayList<>();
     for (PathShape shape : shapeList) {
       PathShape tempShape =shape.clonePath();
+      tempShape.setAffineTransform(shape.getAffineTransform());
       tempShape.setFillColor(shape.getFillColor());
+      tempShape.setStrokeWidth(shape.getStrokeWidth());
+      tempShape.setStrokeColor(shape.getStrokeColor());
         tempList.add(tempShape);
       }
     canvasUndoList.push(tempList);
-    canvasUndoList.forEach(System.out::println);
   }
 
   public static void createShape(Shape shape, AffineTransform affineTransform){
     PathShape pathShape =
         new PathShape(shape,
             affineTransform,
-            DrawView.currentColor);
+            DrawView.currentFillColor,
+            DrawView.currentStrokeColor,
+            DrawView.currentStrokeSize);
     Processor.shapeList.add(pathShape);
   }
 
@@ -75,6 +80,7 @@ public class Processor {
     }
     drawShape(g, markRect);
     drawShape(g,markEllipse);
+    drawShape(g,markLine);
   }
 
   public static void deselectAll(){

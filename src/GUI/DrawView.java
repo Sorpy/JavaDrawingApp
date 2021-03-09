@@ -8,14 +8,16 @@ package GUI;
 import entity.DrawingPanel;
 import entity.button.DragSelectToggleButton;
 import entity.button.EllipseToggleButton;
+import entity.button.LineToggleButton;
 import entity.button.RectToggleButton;
 import entity.button.SelectToggleButton;
-import entity.button.common.CustomToggleButtonImpl;
+import entity.button.common.CustomToggleButton;
 import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -26,10 +28,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import processor.Processor;
@@ -46,58 +51,52 @@ public class DrawView extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JPopupMenu canvasRightClickPopup;
-    private javax.swing.JButton colorChooserButton;
     private javax.swing.JMenuItem deleteButton;
     private javax.swing.JToggleButton dragSelectToggleButton;
     private javax.swing.JPanel drawPanel;
     private javax.swing.JMenu editMenu;
     private javax.swing.JToggleButton ellipseShapeToggleButton;
     private javax.swing.JMenu fileMenu;
+    private static javax.swing.JButton fillColorChooserButton;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenu imageMenu;
     private static javax.swing.JList<String> jList1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JOptionPane jOptionPane;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JToggleButton lineToggleButton;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JToggleButton rectToggleButton;
     private javax.swing.JMenuItem redoButton;
     private javax.swing.JMenuItem rightClickDeleteMenu;
-    private javax.swing.JSlider rotateSlider;
+    private static javax.swing.JSlider rotateSlider;
     private javax.swing.JLabel rotateSliderLabel;
+    private javax.swing.JLabel rotateSliderLabel1;
     private javax.swing.JToggleButton selectToggleButton;
     private javax.swing.JPanel sidePanel;
+    private javax.swing.JTextField sliderValueInput;
+    private static javax.swing.JButton strokeColorChooserButton;
+    private javax.swing.JComboBox strokeWidthComboBox;
+    private javax.swing.JTextField strokeWidthInputValue;
     private javax.swing.JToolBar toolBar;
     private javax.swing.JMenuItem undoButton;
     // End of variables declaration//GEN-END:variables
     public Processor processor;
-    public static Color currentColor = Color.RED;
+    public static Color currentFillColor = Color.RED;
+    public static Color currentStrokeColor = Color.BLACK;
+    public static int currentStrokeSize = 0;
     private JColorChooser colorChooser;
     private boolean toggled = false;
     private static DefaultListModel listModel;
-    /**
-     * Creates new form DrawView
-     */
-    public DrawView() {
-        initComponents();
-        initColorChooser();
-        processor = new Processor();
+
+    public static void setRotateSliderValue(int value) {
+        DrawView.rotateSlider.setValue(value);
     }
 
-    private void initColorChooser() {
-        colorChooser = new JColorChooser(Color.BLACK); // default color is black
-        colorChooser.setBorder(null);
-        colorChooser.getSelectionModel().addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                colorChanged();
-            }
-        });
+    public DrawView() {
+        initComponents();
+        processor = new Processor();
         canvasMouseListener();
-
-        AffineTransform tx = new AffineTransform();
-        tx.rotate(0.5);
-        java.awt.Rectangle shape = new Rectangle(1, 1, 1, 1);
-        Shape newShape = tx.createTransformedShape((shape));
-
     }
 
     /**
@@ -112,18 +111,25 @@ public class DrawView extends JFrame {
         buttonGroup = new javax.swing.ButtonGroup();
         canvasRightClickPopup = new javax.swing.JPopupMenu();
         rightClickDeleteMenu = new javax.swing.JMenuItem();
+        jOptionPane = new javax.swing.JOptionPane();
         toolBar = new javax.swing.JToolBar();
         selectToggleButton = new SelectToggleButton();
         dragSelectToggleButton = new DragSelectToggleButton();
         rectToggleButton = new RectToggleButton();
         ellipseShapeToggleButton = new EllipseToggleButton();
+        lineToggleButton = new LineToggleButton();
         drawPanel = new DrawingPanel(this);
         sidePanel = new javax.swing.JPanel();
-        colorChooserButton = new javax.swing.JButton();
+        fillColorChooserButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         rotateSlider = new javax.swing.JSlider();
         rotateSliderLabel = new javax.swing.JLabel();
+        sliderValueInput = new javax.swing.JTextField();
+        strokeWidthComboBox = new javax.swing.JComboBox();
+        strokeColorChooserButton = new javax.swing.JButton();
+        strokeWidthInputValue = new javax.swing.JTextField();
+        rotateSliderLabel1 = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -193,7 +199,7 @@ public class DrawView extends JFrame {
         toolBar.add(rectToggleButton);
 
         buttonGroup.add(ellipseShapeToggleButton);
-        ellipseShapeToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/RectangleTool.png"))); // NOI18N
+        ellipseShapeToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/ellipse-draw-icon.png"))); // NOI18N
         ellipseShapeToggleButton.setToolTipText("Draw Elipse");
         ellipseShapeToggleButton.setFocusable(false);
         ellipseShapeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -205,6 +211,19 @@ public class DrawView extends JFrame {
         });
         toolBar.add(ellipseShapeToggleButton);
 
+        buttonGroup.add(lineToggleButton);
+        lineToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/line-draw-icon.png"))); // NOI18N
+        lineToggleButton.setToolTipText("Draw Line");
+        lineToggleButton.setFocusable(false);
+        lineToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lineToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        lineToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeOtherButtonsActions(evt);
+            }
+        });
+        toolBar.add(lineToggleButton);
+
         drawPanel.setBackground(new java.awt.Color(255, 255, 255));
         drawPanel.setComponentPopupMenu(canvasRightClickPopup);
 
@@ -212,22 +231,22 @@ public class DrawView extends JFrame {
         drawPanel.setLayout(drawPanelLayout);
         drawPanelLayout.setHorizontalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 483, Short.MAX_VALUE)
+            .addGap(0, 479, Short.MAX_VALUE)
         );
         drawPanelLayout.setVerticalGroup(
             drawPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 623, Short.MAX_VALUE)
         );
 
         sidePanel.setBackground(new java.awt.Color(153, 153, 153));
 
-        colorChooserButton.setIcon(createIcon(currentColor));
-        colorChooserButton.setToolTipText("color chooser");
-        colorChooserButton.setAlignmentY(0.0F);
-        colorChooserButton.setFocusable(false);
-        colorChooserButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        colorChooserButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        colorChooserButton.addActionListener(new java.awt.event.ActionListener() {
+        fillColorChooserButton.setIcon(createFillColorIcon(currentFillColor,true));
+        fillColorChooserButton.setToolTipText("color chooser");
+        fillColorChooserButton.setAlignmentY(0.0F);
+        fillColorChooserButton.setFocusable(false);
+        fillColorChooserButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        fillColorChooserButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        fillColorChooserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clickedColorChooseButton(evt);
             }
@@ -241,7 +260,6 @@ public class DrawView extends JFrame {
         rotateSlider.setMaximum(180);
         rotateSlider.setMinimum(-180);
         rotateSlider.setMinorTickSpacing(15);
-        rotateSlider.setPaintLabels(true);
         rotateSlider.setPaintTicks(true);
         rotateSlider.setValue(0);
         rotateSlider.setName("rotate"); // NOI18N
@@ -250,8 +268,51 @@ public class DrawView extends JFrame {
                 rotateSliderStateChanged(evt);
             }
         });
+        rotateSlider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                rotateSliderMouseReleased(evt);
+            }
+        });
 
+        rotateSliderLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         rotateSliderLabel.setText("Rotate Slider");
+
+        sliderValueInput.setText("0");
+        sliderValueInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                sliderValueInputKeyPressed(evt);
+            }
+        });
+
+        strokeWidthComboBox.setModel(loadBrushSizeIcons());
+        strokeWidthComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                strokeWidthComboBoxActionPerformed(evt);
+            }
+        });
+
+        strokeColorChooserButton.setIcon(createFillColorIcon(currentStrokeColor,false));
+        strokeColorChooserButton.setToolTipText("color chooser");
+        strokeColorChooserButton.setAlignmentY(0.0F);
+        strokeColorChooserButton.setFocusable(false);
+        strokeColorChooserButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        strokeColorChooserButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        strokeColorChooserButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                strokeColorChooserButtonOnClick(evt);
+            }
+        });
+
+        strokeWidthInputValue.setText("0");
+        strokeWidthInputValue.setPreferredSize(new java.awt.Dimension(12, 24));
+        strokeWidthInputValue.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                strokeWidthInputValueKeyPressed(evt);
+            }
+        });
+
+        rotateSliderLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        rotateSliderLabel1.setText("Stroke Size");
 
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
@@ -260,27 +321,54 @@ public class DrawView extends JFrame {
             .addGroup(sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(colorChooserButton)
+                    .addGroup(sidePanelLayout.createSequentialGroup()
+                        .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addGroup(sidePanelLayout.createSequentialGroup()
+                                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(strokeWidthInputValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(sliderValueInput, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(sidePanelLayout.createSequentialGroup()
+                                        .addGap(1, 1, 1)
+                                        .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(rotateSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                                            .addComponent(strokeWidthComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addGroup(sidePanelLayout.createSequentialGroup()
+                                        .addGap(31, 31, 31)
+                                        .addComponent(rotateSliderLabel1)))))
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(rotateSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(sidePanelLayout.createSequentialGroup()
-                .addGap(89, 89, 89)
-                .addComponent(rotateSliderLabel)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 63, Short.MAX_VALUE)
+                        .addComponent(rotateSliderLabel)
+                        .addGap(69, 69, 69))
+                    .addGroup(sidePanelLayout.createSequentialGroup()
+                        .addComponent(fillColorChooserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(sidePanelLayout.createSequentialGroup()
+                        .addComponent(strokeColorChooserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         sidePanelLayout.setVerticalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(colorChooserButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
+                .addComponent(fillColorChooserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(strokeColorChooserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(rotateSliderLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(strokeWidthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(strokeWidthInputValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rotateSliderLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(rotateSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(sliderValueInput)
+                    .addComponent(rotateSlider, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(9, 9, 9)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -342,7 +430,7 @@ public class DrawView extends JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(drawPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
+                    .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -363,28 +451,19 @@ public class DrawView extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void clickedColorChooseButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clickedColorChooseButton
-        Color newColor = JColorChooser.showDialog(null, "Choose a color", currentColor);
-        toggleColorChooser(newColor);
-    }//GEN-LAST:event_clickedColorChooseButton
-
     private void undoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoButtonActionPerformed
         Processor.canvasRedoList.push(Processor.canvasUndoList.pop());
         if (!Processor.canvasUndoList.empty()) {
             ArrayList<PathShape> tempList = new ArrayList<>();
             for (PathShape shape : Processor.canvasUndoList.peek()) {
-                PathShape tempShape = shape.clonePath();
-                tempShape.setFillColor(shape.getFillColor());
+                PathShape tempShape = getPathShape(shape);
                 tempList.add(tempShape);
             }
             Processor.shapeList = tempList;
-        }else {
+        }else if (Processor.shapeList.size()==1){
             Processor.shapeList = new ArrayList<>();
         }
-
         processor.repaint((DrawingPanel) drawPanel);
-
-        Processor.canvasUndoList.forEach(System.out::println);
         setItemListModel();
     }//GEN-LAST:event_undoButtonActionPerformed
 
@@ -393,8 +472,7 @@ public class DrawView extends JFrame {
         if (!Processor.canvasRedoList.empty()){
             ArrayList<PathShape> tempList = new ArrayList<>();
             for (PathShape shape : Processor.canvasRedoList.pop()) {
-                PathShape tempShape = shape.clonePath();
-                tempShape.setFillColor(shape.getFillColor());
+                PathShape tempShape = getPathShape(shape);
                 tempList.add(tempShape);
             }
             Processor.shapeList = tempList;
@@ -403,10 +481,19 @@ public class DrawView extends JFrame {
         setItemListModel();
     }//GEN-LAST:event_redoButtonActionPerformed
 
+    private PathShape getPathShape(PathShape shape) {
+        PathShape tempShape = shape.clonePath();
+        tempShape.setAffineTransform(shape.getAffineTransform());
+        tempShape.setFillColor(shape.getFillColor());
+        tempShape.setStrokeWidth(shape.getStrokeWidth());
+        tempShape.setStrokeColor(shape.getStrokeColor());
+        return tempShape;
+    }
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         Processor.shapeList.removeIf(PathShape::isSelected);
         processor.repaint((DrawingPanel)drawPanel);
         setItemListModel();
+        Processor.addToUndoList();
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void removeOtherButtonsActions(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeOtherButtonsActions
@@ -416,15 +503,87 @@ public class DrawView extends JFrame {
     }//GEN-LAST:event_removeOtherButtonsActions
 
     private void rightClickDeleteMenuAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rightClickDeleteMenuAction
-        // TODO add your handling code here:
+        deleteButtonActionPerformed(evt);
     }//GEN-LAST:event_rightClickDeleteMenuAction
+
+    private void rotateSliderMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rotateSliderMouseReleased
+        Processor.addToUndoList();
+    }//GEN-LAST:event_rotateSliderMouseReleased
 
     private void rotateSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rotateSliderStateChanged
         double sliderValue = rotateSlider.getValue();
         RotateProcessor rotateProcessor = new RotateProcessor();
         rotateProcessor.rotateShape(sliderValue);
+        sliderValueInput.setText(String.valueOf((int)sliderValue));
         processor.repaint((DrawingPanel)drawPanel);
     }//GEN-LAST:event_rotateSliderStateChanged
+
+    private void clickedColorChooseButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clickedColorChooseButton
+        Color newColor = JColorChooser.showDialog(null, "Choose a fill color", currentFillColor);
+        toggleFillColorChooser(newColor);
+    }//GEN-LAST:event_clickedColorChooseButton
+
+    private void sliderValueInputKeyPressed(
+        java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sliderValueKeyPressed
+        if (SelectToggleButton.getSelectedItem() != null) {
+            sliderValueInput.setEditable(Character.isDigit(evt.getKeyChar()) || evt.getKeyCode() == '-'
+                || evt.getKeyCode() == KeyEvent.VK_BACK_SPACE);
+            checkRotationValue(evt);
+        }else sliderValueInput.setEditable(false);
+    }//GEN-LAST:event_sliderValueKeyPressed
+
+    private void strokeColorChooserButtonOnClick(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strokeColorChooserButtonOnClick
+        Color newColor = JColorChooser.showDialog(null, "Choose a stroke color", currentStrokeColor);
+        toggleStrokeColorChooser(newColor);
+    }//GEN-LAST:event_strokeColorChooserButtonOnClick
+
+
+
+    private void strokeWidthInputValueKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_strokeWidthInputValueKeyPressed
+        strokeWidthInputValue.setEditable
+            (Character.isDigit(evt.getKeyChar()) ||
+                evt.getKeyCode() == KeyEvent.VK_BACK_SPACE
+            );
+        int strokeWidth =strokeWidthInputValue.getText().isEmpty() ?
+            0 : Integer.parseInt(strokeWidthInputValue.getText());
+        checkStrokeValue(strokeWidth);
+    }//GEN-LAST:event_strokeWidthInputValueKeyPressed
+
+    private void checkStrokeValue(int strokeWidth) {
+        if (strokeWidth >150){
+            JOptionPane.showMessageDialog(this,
+                "Maximum size of stroke 150",
+                "Stroke Width Error",
+                JOptionPane.ERROR_MESSAGE);
+            strokeWidthInputValue.setText("150");
+        }else {
+            currentStrokeSize = strokeWidth;
+        }
+    }
+
+    private void strokeWidthComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strokeWidthComboBoxActionPerformed
+        currentStrokeSize = (int) Math.pow(strokeWidthComboBox.getSelectedIndex()+1,2);
+        System.out.println(strokeWidthComboBox.getSelectedIndex()+1);
+        strokeWidthInputValue.setText(String.valueOf(currentStrokeSize));
+    }//GEN-LAST:event_strokeWidthComboBoxActionPerformed
+
+    private void checkRotationValue(KeyEvent evt) {
+        String regex = "(-?[0-9]{1,3})";
+        if (evt.getKeyCode()== KeyEvent.VK_ENTER){
+            if (!sliderValueInput.getText().matches(regex) ||
+                (Integer.parseInt(sliderValueInput.getText())>180 ||
+                Integer.parseInt(sliderValueInput.getText())<-180)){
+                JOptionPane.showMessageDialog(this,
+                    "Rotation must be between -180 and 180 degrees",
+                    "Rotation Error",
+                    JOptionPane.ERROR_MESSAGE);
+                sliderValueInput.setText("0");
+            }
+            else {
+                rotateSlider.setValue(Integer.parseInt(sliderValueInput.getText()));
+            }
+        }
+    }
 
     public static void setItemListModel(){
         listModel = new DefaultListModel();
@@ -504,37 +663,61 @@ public class DrawView extends JFrame {
         });
     }
 
-    protected void colorChanged() {
-        colorChooserButton.setIcon(createIcon(colorChooser.getSelectionModel().getSelectedColor()));
-    }
+//    protected void colorChanged() {
+//        fillColorChooserButton.setIcon(createFillColorIcon(colorChooser.getSelectionModel().getSelectedColor()));
+//    }
 
-    protected void toggleColorChooser(Color newColor) {
+    private void toggleStrokeColorChooser(Color newColor) {
         if (newColor == null) return;
-        currentColor = newColor;
-        colorChooserButton.setIcon(createIcon(currentColor));
+        currentStrokeColor = newColor;
+        strokeColorChooserButton.setIcon(createFillColorIcon(currentStrokeColor,false));
         repaint();
     }
 
-    public static  ImageIcon createIcon(Color main) {
+
+
+    protected void toggleFillColorChooser(Color newColor) {
+        if (newColor == null) return;
+        currentFillColor = newColor;
+        fillColorChooserButton.setIcon(createFillColorIcon(currentFillColor,true));
+        repaint();
+    }
+
+
+
+    public static  ImageIcon createFillColorIcon(Color main,boolean isFill) {
         BufferedImage image = new BufferedImage(DEFAULT_BUTTON_SIZE, DEFAULT_BUTTON_SIZE, java.awt.image.BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setColor(main);
         graphics.fillRect(0, 0, DEFAULT_BUTTON_SIZE, DEFAULT_BUTTON_SIZE);
-        graphics.setXORMode(Color.BLACK);
+        //graphics.setXORMode(Color.BLACK);
         graphics.drawRect(0, 0, DEFAULT_BUTTON_SIZE-1, DEFAULT_BUTTON_SIZE-1);
+        if (!isFill){
+            graphics.setColor(new Color(195, 195, 208));
+            graphics.fillRect(3,3,DEFAULT_BUTTON_SIZE-6,DEFAULT_BUTTON_SIZE-6);
+        }
         image.flush();
         return new ImageIcon(image);
     }
 
-    public CustomToggleButtonImpl getSelectedButtonText(ButtonGroup buttonGroup) {
+    public CustomToggleButton getSelectedButtonText(ButtonGroup buttonGroup) {
         for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
 
             if (button.isSelected()) {
-                return (CustomToggleButtonImpl)button;
+                return (CustomToggleButton)button;
             }
         }
 
         return null;
+    }
+
+    private DefaultComboBoxModel<Icon> loadBrushSizeIcons() {
+        DefaultComboBoxModel<Icon> model = new DefaultComboBoxModel<>();
+        model.addElement(new ImageIcon(getClass().getResource("/resources/strokes/size-1-stroke.png")));
+        model.addElement(new ImageIcon(getClass().getResource("/resources/strokes/size-2-stroke.png")));
+        model.addElement(new ImageIcon(getClass().getResource("/resources/strokes/size-3-stroke.png")));
+        model.addElement(new ImageIcon(getClass().getResource("/resources/strokes/size-4-stroke.png")));
+        return model;
     }
 }

@@ -11,6 +11,4 @@ public interface CustomToggleButton {
   void onWheelMovedFunction(MouseEvent e);
   void onDragFunction(MouseEvent e);
   void onMoveFunction(MouseEvent e);
-  boolean isSelected();
-  void setSelected(boolean selected);
 }

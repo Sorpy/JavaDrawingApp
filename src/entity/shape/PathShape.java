@@ -4,37 +4,19 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 
 public class PathShape extends Path2D.Double implements Cloneable {
 
-  //  ModelShape shape;
-  private Shape shape;
   AffineTransform affineTransform;
+  private Shape shape;
   private boolean selected;
   private Color fillColor;
+  private float strokeWidth;
+  private Color strokeColor;
 
-  public double getRotation() {
-    return rotation;
-  }
-
-  public void setRotation(double rotation) {
-    this.rotation = rotation;
-  }
-
-  public Point getTranslate() {
-    return translate;
-  }
-
-  public void setTranslate(Point translate) {
-    this.translate = translate;
-  }
-
-  private double rotation;
-  private Point translate;
 
   public PathShape(Shape s, AffineTransform at) {
     super(s, at);
@@ -42,15 +24,40 @@ public class PathShape extends Path2D.Double implements Cloneable {
     this.affineTransform = at;
   }
 
-  public PathShape(Shape s, AffineTransform at,Color color) {
+  public PathShape(Shape s, AffineTransform at, Color color) {
     super(s, at);
     this.shape = s;
     this.affineTransform = at;
     this.fillColor = color;
   }
 
+  public PathShape(Shape s, AffineTransform at, Color color, Color strokeColor,float strokeSize) {
+    super(s, at);
+    this.shape = s;
+    this.affineTransform = at;
+    this.fillColor = color;
+    this.strokeWidth = strokeSize;
+    this.strokeColor = strokeColor;
+  }
+
   public PathShape(Shape s) {
     super(s);
+  }
+
+  public float getStrokeWidth() {
+    return strokeWidth;
+  }
+
+  public void setStrokeWidth(float strokeWidth) {
+    this.strokeWidth = strokeWidth;
+  }
+
+  public Color getStrokeColor() {
+    return strokeColor;
+  }
+
+  public void setStrokeColor(Color strokeColor) {
+    this.strokeColor = strokeColor;
   }
 
   public PathShape clonePath() {
@@ -63,15 +70,6 @@ public class PathShape extends Path2D.Double implements Cloneable {
 
   public void setFillColor(Color fillColor) {
     this.fillColor = fillColor;
-  }
-
-  public Point getLocation() {
-    //return new Point(shape.getLocation());
-    return null;
-  }
-
-  public void setLocation(Point point) {
-//    shape.setLocation(point);
   }
 
   public boolean isSelected() {
@@ -99,14 +97,15 @@ public class PathShape extends Path2D.Double implements Cloneable {
   }
 
   public void DrawSelf(Graphics g) {
+
     Graphics2D g2 = (Graphics2D) g;
-//    AffineTransform saveTransform = g2.getTransform();
-//    AffineTransform identity = affineTransform;
-//    g2.setTransform(identity);
-    //PathShape path = new PathShape(shape);
-    //path.clonePath();
     g2.setColor(getFillColor());
     g2.fill(this);
+    if (strokeWidth>0.00) {
+      g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+      g2.setColor(getStrokeColor());
+      g2.draw(this);
+    }
     if (isSelected()) {
 
       float[] dash1 = {10.0f};

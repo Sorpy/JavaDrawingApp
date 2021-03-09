@@ -11,7 +11,7 @@ public class RotateProcessor extends Processor {
   public void rotateShape(double rotateValue) {
 
     for (int i = 0; i < shapeList.size(); i++) {
-      if (shapeList.get(i).isSelected()) {
+      if (shapeList.get(i).isSelected() && currentlyRotatedShape!=null) {
         AffineTransform tx = new AffineTransform();
         tx.rotate(Math.toRadians(rotateValue),
             (currentlyRotatedShape.getBounds2D().getX()
@@ -23,7 +23,7 @@ public class RotateProcessor extends Processor {
         rotated.setAffineTransform(new AffineTransform());
         shapeList.set(i, rotated);
         shapeList.get(i).setSelected(true);
-        shapeList.get(i).setFillColor(DrawView.currentColor);
+        shapeList.get(i).setFillColor(DrawView.currentFillColor);
         break;
       }
     }
