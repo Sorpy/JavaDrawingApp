@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ac7afd44-579d-40d3-a935-2cb9bd0e0a77" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/src/entity/button/LineToggleButton.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/processor/ItemsListCellRenderer.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/resources/strokes" afterDir="true" />
       <change beforePath="$PROJECT_DIR$/build/classes/GUI/DrawView$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/GUI/DrawView$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/GUI/DrawView$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/GUI/DrawView$2.class" afterDir="false" />
@@ -10,6 +11,7 @@
       <change beforePath="$PROJECT_DIR$/build/classes/GUI/DrawView$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/GUI/DrawView$4.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/GUI/DrawView.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/GUI/DrawView.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/GUI/DrawView.form" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/GUI/DrawView.form" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/private/private.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/private/private.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/nbproject/private/private.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/private/private.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/DrawView.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/DrawView.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GUI/DrawView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GUI/DrawView.java" afterDir="false" />
@@ -90,25 +92,25 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration" cleanupOnStartRun="true">
-    <configuration>C:\Users\Lubo\AppData\Roaming\Subversion</configuration>
+    <configuration>C:\Users\Lyubomir Proychev\AppData\Roaming\Subversion</configuration>
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="SvnFileUrlMappingImpl">
     <option name="myMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\kuramiqnko trqbva da zavyrsha\Github Commiting\JavaDrawingApp" />
-          <option name="myCopyRoot" value="D:\kuramiqnko trqbva da zavyrsha\Github Commiting\JavaDrawingApp" />
+          <option name="myVcsRoot" value="C:\Users\Lyubomir Proychev\Documents\GitHub\JavaDrawingApp" />
+          <option name="myCopyRoot" value="C:\Users\Lyubomir Proychev\Documents\GitHub\JavaDrawingApp" />
         </SvnCopyRootSimple>
       </list>
     </option>
     <option name="myMoreRealMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\kuramiqnko trqbva da zavyrsha\Github Commiting\JavaDrawingApp" />
-          <option name="myCopyRoot" value="D:\kuramiqnko trqbva da zavyrsha\Github Commiting\JavaDrawingApp" />
+          <option name="myVcsRoot" value="C:\Users\Lyubomir Proychev\Documents\GitHub\JavaDrawingApp" />
+          <option name="myCopyRoot" value="C:\Users\Lyubomir Proychev\Documents\GitHub\JavaDrawingApp" />
         </SvnCopyRootSimple>
       </list>
     </option>
@@ -126,43 +128,95 @@
       <workItem from="1614193615640" duration="13212000" />
       <workItem from="1614596378109" duration="60351000" />
       <workItem from="1614945223426" duration="13890000" />
+      <workItem from="1615386154471" duration="739000" />
+      <workItem from="1615389195215" duration="13839000" />
+      <workItem from="1615471297475" duration="3743000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="765" y="204" key="#com.intellij.ide.util.MemberChooser" timestamp="1615461715296">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="765" y="204" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615461715296" />
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1615478066761">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478066761" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615470463672" />
+    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1615478066761">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478066761" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615470463671" />
+    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1615478066760">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478066760" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615470463671" />
+    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1615478066761">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478066761" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615470463672" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1615478110482">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478110482" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615468432145" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1615478110481">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478110481" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615468432145" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1615478110481">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478110481" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615468432145" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1615478110482">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478110482" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615468432145" />
+    <state x="-1175" y="339" width="585" height="534" key="find.popup" timestamp="1615478398568">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1175" y="339" width="585" height="534" key="find.popup/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615478398568" />
+    <state x="616" y="173" width="672" height="676" key="search.everywhere.popup" timestamp="1615470157228">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="173" width="672" height="676" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1615470157228" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/entity/button/SelectToggleButton.java</url>
-          <line>37</line>
+          <line>38</line>
           <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/GUI/DrawView.java</url>
-          <line>455</line>
+          <line>601</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/GUI/DrawView.java</url>
-          <line>564</line>
-          <option name="timeStamp" value="48" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/GUI/DrawView.java</url>
-          <line>548</line>
-          <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/GUI/DrawView.java</url>
-          <line>546</line>
+          <line>707</line>
           <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/processor/ItemsListCellRenderer.java</url>
+          <line>22</line>
+          <option name="timeStamp" value="53" />
         </line-breakpoint>
         <line-breakpoint type="java-method">
           <url>file://$PROJECT_DIR$/src/processor/Processor.java</url>
-          <line>23</line>
+          <line>26</line>
           <properties class="processor.Processor">
             <option name="EMULATED" value="true" />
           </properties>

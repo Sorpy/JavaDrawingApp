@@ -15,7 +15,7 @@ import java.util.Stack;
 
 public class Processor {
 
-
+  public static Long id;
   public static PathShape markRect;
   public static PathShape markEllipse;
   public static PathShape markLine;
@@ -24,23 +24,23 @@ public class Processor {
   public static Stack<ArrayList<PathShape>> canvasRedoList = new Stack<>();
 
   public static void addToUndoList() {
-    if (canvasUndoList.size() >= 10){
+    if (canvasUndoList.size() >= 10) {
       canvasUndoList.remove(0);
       System.out.println("itemRemoved");
-  }
+    }
     ArrayList<PathShape> tempList = new ArrayList<>();
     for (PathShape shape : shapeList) {
-      PathShape tempShape =shape.clonePath();
+      PathShape tempShape = shape.clonePath();
       tempShape.setAffineTransform(shape.getAffineTransform());
       tempShape.setFillColor(shape.getFillColor());
       tempShape.setStrokeWidth(shape.getStrokeWidth());
       tempShape.setStrokeColor(shape.getStrokeColor());
-        tempList.add(tempShape);
-      }
+      tempList.add(tempShape);
+    }
     canvasUndoList.push(tempList);
   }
 
-  public static void createShape(Shape shape, AffineTransform affineTransform){
+  public static void createShape(Shape shape, AffineTransform affineTransform) {
     PathShape pathShape =
         new PathShape(shape,
             affineTransform,
@@ -50,7 +50,7 @@ public class Processor {
     Processor.shapeList.add(pathShape);
   }
 
-  public static void makeSelection(int x, int y, int width, int height,Color color) {
+  public static void makeSelection(int x, int y, int width, int height, Color color) {
     if (x > width) {
       int temp = x;
       x = width;
@@ -62,8 +62,13 @@ public class Processor {
       height = temp;
     }
 
-    Processor.markRect = new PathShape(new Double(x, y, width - x, height - y), new AffineTransform());
+    Processor.markRect = new PathShape(new Double(x, y, width - x, height - y),
+        new AffineTransform());
     Processor.markRect.setFillColor(color);
+  }
+
+  public static void deselectAll() {
+    shapeList.forEach(modelShape -> modelShape.setSelected(false));
   }
 
   public void reDraw(Graphics g) {
@@ -79,16 +84,12 @@ public class Processor {
       drawShape(g, pathShape);
     }
     drawShape(g, markRect);
-    drawShape(g,markEllipse);
-    drawShape(g,markLine);
-  }
-
-  public static void deselectAll(){
-    shapeList.forEach(modelShape -> modelShape.setSelected(false));
+    drawShape(g, markEllipse);
+    drawShape(g, markLine);
   }
 
   public void drawShape(Graphics2D g, PathShape item) {
-    if (item!=null) {
+    if (item != null) {
       item.DrawSelf(g);
     }
   }

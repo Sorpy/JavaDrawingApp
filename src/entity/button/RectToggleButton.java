@@ -4,9 +4,10 @@ import GUI.DrawView;
 import entity.button.common.CustomToggleButton;
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D.Double;
 import javax.swing.JToggleButton;
 import processor.Processor;
 
@@ -76,8 +77,10 @@ public class RectToggleButton extends JToggleButton implements CustomToggleButto
     }
 
     AffineTransform affineTransform = new AffineTransform();
-    Processor.createShape(new Rectangle(x, y, width - x, height - y),affineTransform);
-    DrawView.setItemListModel();
-    Processor.addToUndoList();
+    if (Math.abs(x-width)>0 && Math.abs(y-height)>0 ) {
+      Processor.createShape(new Double(x, y, width - x, height - y), affineTransform);
+      DrawView.setItemListModel();
+      Processor.addToUndoList();
+    }
   }
 }

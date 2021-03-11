@@ -37,6 +37,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import processor.ItemsListCellRenderer;
 import processor.Processor;
 import processor.RotateProcessor;
 
@@ -88,6 +89,7 @@ public class DrawView extends JFrame {
     private JColorChooser colorChooser;
     private boolean toggled = false;
     private static DefaultListModel listModel;
+    private static final ItemsListCellRenderer itemsListCellRenderer = new ItemsListCellRenderer();
 
     public static void setRotateSliderValue(int value) {
         DrawView.rotateSlider.setValue(value);
@@ -253,7 +255,6 @@ public class DrawView extends JFrame {
         });
 
         jList1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        setItemListModel();
         jScrollPane2.setViewportView(jList1);
 
         rotateSlider.setMajorTickSpacing(60);
@@ -463,8 +464,9 @@ public class DrawView extends JFrame {
         }else if (Processor.shapeList.size()==1){
             Processor.shapeList = new ArrayList<>();
         }
-        processor.repaint((DrawingPanel) drawPanel);
         setItemListModel();
+        processor.repaint((DrawingPanel) drawPanel);
+
     }//GEN-LAST:event_undoButtonActionPerformed
 
     private void redoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoButtonActionPerformed
@@ -591,6 +593,8 @@ public class DrawView extends JFrame {
             listModel.addElement(shape);
         }
         jList1.setModel(listModel);
+        jList1.setCellRenderer(itemsListCellRenderer);
+
     }
 
 

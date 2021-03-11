@@ -7,11 +7,13 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import processor.Processor;
 
 public class PathShape extends Path2D.Double implements Cloneable {
 
   AffineTransform affineTransform;
   private Shape shape;
+  private Long id;
   private boolean selected;
   private Color fillColor;
   private float strokeWidth;
@@ -31,7 +33,7 @@ public class PathShape extends Path2D.Double implements Cloneable {
     this.fillColor = color;
   }
 
-  public PathShape(Shape s, AffineTransform at, Color color, Color strokeColor,float strokeSize) {
+  public PathShape(Shape s, AffineTransform at, Color color, Color strokeColor, float strokeSize) {
     super(s, at);
     this.shape = s;
     this.affineTransform = at;
@@ -40,8 +42,39 @@ public class PathShape extends Path2D.Double implements Cloneable {
     this.strokeColor = strokeColor;
   }
 
+
   public PathShape(Shape s) {
     super(s);
+  }
+
+  public void setParameters(AffineTransform affineTransform,
+      Color fillColor,
+      Color strokeColor,
+      boolean selected,
+      float strokeWidth,
+      Long id) {
+    this.selected = selected;
+    this.affineTransform = affineTransform;
+    this.fillColor = fillColor;
+    this.strokeWidth = strokeWidth;
+    this.strokeColor = strokeColor;
+    this.id = id;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Shape getShape() {
+    return shape;
+  }
+
+  public void setShape(Shape shape) {
+    this.shape = shape;
   }
 
   public float getStrokeWidth() {
@@ -101,7 +134,7 @@ public class PathShape extends Path2D.Double implements Cloneable {
     Graphics2D g2 = (Graphics2D) g;
     g2.setColor(getFillColor());
     g2.fill(this);
-    if (strokeWidth>0.00) {
+    if (strokeWidth > 0.00) {
       g2.setStroke(new BasicStroke(strokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
       g2.setColor(getStrokeColor());
       g2.draw(this);
