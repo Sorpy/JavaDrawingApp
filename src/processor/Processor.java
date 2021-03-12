@@ -15,7 +15,7 @@ import java.util.Stack;
 
 public class Processor {
 
-  public static Long id;
+  public static Long id =0L;
   public static PathShape markRect;
   public static PathShape markEllipse;
   public static PathShape markLine;
@@ -31,10 +31,6 @@ public class Processor {
     ArrayList<PathShape> tempList = new ArrayList<>();
     for (PathShape shape : shapeList) {
       PathShape tempShape = shape.clonePath();
-      tempShape.setAffineTransform(shape.getAffineTransform());
-      tempShape.setFillColor(shape.getFillColor());
-      tempShape.setStrokeWidth(shape.getStrokeWidth());
-      tempShape.setStrokeColor(shape.getStrokeColor());
       tempList.add(tempShape);
     }
     canvasUndoList.push(tempList);

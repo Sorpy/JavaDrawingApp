@@ -14,12 +14,10 @@ import processor.Processor;
 
 public class DragSelectToggleButton extends JToggleButton implements CustomToggleButton {
 
-  private boolean selected = false;
+  public static boolean selected = false;
   private Point startPoint;
   private Point lastLocation;
-  private Point topLeftPoint;
-  private Point bottomRightPoint;
-  private List<PathShape> selectedShapeList = new ArrayList<>();
+  public static List<PathShape> selectedShapeList = new ArrayList<>();
 
   public Point getLastLocation() {
     return lastLocation;

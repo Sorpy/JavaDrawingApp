@@ -19,47 +19,48 @@ public class ItemsListCellRenderer extends DefaultListCellRenderer {
   @Override
   public Component getListCellRendererComponent(JList<?> list, Object value, int index,
       boolean isSelected, boolean cellHasFocus) {
+    PathShape pathShape = (PathShape) value;
+    //if (pathShape.getShape()!=null) {
+      this.setText(getName(pathShape));
+      this.setIcon(createFillColorIcon(pathShape));
+      setComponentOrientation(list.getComponentOrientation());
 
-    this.setText(getName((PathShape) value));
-    this.setIcon(createFillColorIcon((PathShape) value));
-    setComponentOrientation(list.getComponentOrientation());
+      Color bg = null;
+      Color fg = null;
 
-    Color bg = null;
-    Color fg = null;
+      JList.DropLocation dropLocation = list.getDropLocation();
+      if (dropLocation != null
+          && !dropLocation.isInsert()
+          && dropLocation.getIndex() == index) {
 
-    JList.DropLocation dropLocation = list.getDropLocation();
-    if (dropLocation != null
-        && !dropLocation.isInsert()
-        && dropLocation.getIndex() == index) {
+        bg = DefaultLookup.getColor(this, ui, "List.dropCellBackground");
+        fg = DefaultLookup.getColor(this, ui, "List.dropCellForeground");
 
-      bg = DefaultLookup.getColor(this, ui, "List.dropCellBackground");
-      fg = DefaultLookup.getColor(this, ui, "List.dropCellForeground");
+        isSelected = true;
+      }
 
-      isSelected = true;
-    }
-
-    if (isSelected) {
-      setBackground(bg == null ? list.getSelectionBackground() : bg);
-      setForeground(fg == null ? list.getSelectionForeground() : fg);
-    }
-    else {
-      setBackground(list.getBackground());
-      setForeground(list.getForeground());
-    }
-
-    setEnabled(list.isEnabled());
-    setFont(list.getFont());
-
-    Border border = null;
-    if (cellHasFocus) {
       if (isSelected) {
-        border = DefaultLookup.getBorder(this, ui, "List.focusSelectedCellHighlightBorder");
+        setBackground(bg == null ? list.getSelectionBackground() : bg);
+        setForeground(fg == null ? list.getSelectionForeground() : fg);
+      } else {
+        setBackground(list.getBackground());
+        setForeground(list.getForeground());
       }
-      if (border == null) {
-        border = DefaultLookup.getBorder(this, ui, "List.focusCellHighlightBorder");
+
+      setEnabled(list.isEnabled());
+      setFont(list.getFont());
+
+      Border border = null;
+      if (cellHasFocus) {
+        if (isSelected) {
+          border = DefaultLookup.getBorder(this, ui, "List.focusSelectedCellHighlightBorder");
+        }
+        if (border == null) {
+          border = DefaultLookup.getBorder(this, ui, "List.focusCellHighlightBorder");
+        }
       }
-    }
-    setBorder(border);
+      setBorder(border);
+
     return this;
   }
 
@@ -73,7 +74,7 @@ public class ItemsListCellRenderer extends DefaultListCellRenderer {
     BufferedImage rawImage = createEmptyImage(value);
     BufferedImage image = new BufferedImage(35, 35, java.awt.image.BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics = image.createGraphics();
-    graphics.drawImage(rawImage,0,0,25,25,null);
+    graphics.drawImage(rawImage,0,0,35,35,null);
     image.flush();
     return new ImageIcon(image);
   }
@@ -83,12 +84,12 @@ public class ItemsListCellRenderer extends DefaultListCellRenderer {
     int shapeHeight = (int) value.getShape().getBounds2D().getHeight();
     BufferedImage image;
     if (shapeWidth > shapeHeight) {
-      image = new BufferedImage(shapeWidth + shapeWidth/10,
-          shapeWidth + shapeWidth/10,
+      image = new BufferedImage(shapeWidth + shapeWidth/5,
+          shapeWidth + shapeWidth/5,
           java.awt.image.BufferedImage.TYPE_INT_RGB);
     } else {
-      image = new BufferedImage(shapeHeight + shapeHeight/10,
-          shapeHeight + shapeHeight/10,
+      image = new BufferedImage(shapeHeight + shapeHeight/5,
+          shapeHeight + shapeHeight/5,
           java.awt.image.BufferedImage.TYPE_INT_RGB);
     }
     AffineTransform affineTransform = new AffineTransform();

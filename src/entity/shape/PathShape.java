@@ -40,8 +40,8 @@ public class PathShape extends Path2D.Double implements Cloneable {
     this.fillColor = color;
     this.strokeWidth = strokeSize;
     this.strokeColor = strokeColor;
+    this.id=Processor.id++;
   }
-
 
   public PathShape(Shape s) {
     super(s);
@@ -94,7 +94,14 @@ public class PathShape extends Path2D.Double implements Cloneable {
   }
 
   public PathShape clonePath() {
-    return new PathShape(this);
+    PathShape pathShape = new PathShape(this);
+    pathShape.setAffineTransform(this.getAffineTransform());
+    pathShape.setShape(this.getShape());
+    pathShape.setFillColor(this.getFillColor());
+    pathShape.setStrokeColor(this.getStrokeColor());
+    pathShape.setStrokeWidth(this.getStrokeWidth());
+    pathShape.setId(this.getId());
+    return pathShape;
   }
 
   public Color getFillColor() {

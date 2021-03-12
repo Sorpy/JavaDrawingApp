@@ -61,7 +61,7 @@ public class DrawView extends JFrame {
     private static javax.swing.JButton fillColorChooserButton;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenu imageMenu;
-    private static javax.swing.JList<String> jList1;
+    private static javax.swing.JList<PathShape> itemsList;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JOptionPane jOptionPane;
     private javax.swing.JScrollPane jScrollPane2;
@@ -88,7 +88,7 @@ public class DrawView extends JFrame {
     public static int currentStrokeSize = 0;
     private JColorChooser colorChooser;
     private boolean toggled = false;
-    private static DefaultListModel listModel;
+    private static DefaultListModel<PathShape> listModel;
     private static final ItemsListCellRenderer itemsListCellRenderer = new ItemsListCellRenderer();
 
     public static void setRotateSliderValue(int value) {
@@ -96,9 +96,11 @@ public class DrawView extends JFrame {
     }
 
     public DrawView() {
+        listModel = new DefaultListModel<>();
         initComponents();
         processor = new Processor();
         canvasMouseListener();
+
     }
 
     /**
@@ -124,7 +126,7 @@ public class DrawView extends JFrame {
         sidePanel = new javax.swing.JPanel();
         fillColorChooserButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        itemsList = new javax.swing.JList<PathShape>();
         rotateSlider = new javax.swing.JSlider();
         rotateSliderLabel = new javax.swing.JLabel();
         sliderValueInput = new javax.swing.JTextField();
@@ -254,8 +256,15 @@ public class DrawView extends JFrame {
             }
         });
 
-        jList1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jScrollPane2.setViewportView(jList1);
+        itemsList.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        setItemListModel();
+        itemsList.setCellRenderer(itemsListCellRenderer);
+        itemsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                itemsListValueChanged(evt);
+            }
+        });
+        jScrollPane2.setViewportView(itemsList);
 
         rotateSlider.setMajorTickSpacing(60);
         rotateSlider.setMaximum(180);
@@ -457,7 +466,7 @@ public class DrawView extends JFrame {
         if (!Processor.canvasUndoList.empty()) {
             ArrayList<PathShape> tempList = new ArrayList<>();
             for (PathShape shape : Processor.canvasUndoList.peek()) {
-                PathShape tempShape = getPathShape(shape);
+                PathShape tempShape = shape.clonePath();
                 tempList.add(tempShape);
             }
             Processor.shapeList = tempList;
@@ -474,7 +483,7 @@ public class DrawView extends JFrame {
         if (!Processor.canvasRedoList.empty()){
             ArrayList<PathShape> tempList = new ArrayList<>();
             for (PathShape shape : Processor.canvasRedoList.pop()) {
-                PathShape tempShape = getPathShape(shape);
+                PathShape tempShape = shape.clonePath();
                 tempList.add(tempShape);
             }
             Processor.shapeList = tempList;
@@ -483,14 +492,6 @@ public class DrawView extends JFrame {
         setItemListModel();
     }//GEN-LAST:event_redoButtonActionPerformed
 
-    private PathShape getPathShape(PathShape shape) {
-        PathShape tempShape = shape.clonePath();
-        tempShape.setAffineTransform(shape.getAffineTransform());
-        tempShape.setFillColor(shape.getFillColor());
-        tempShape.setStrokeWidth(shape.getStrokeWidth());
-        tempShape.setStrokeColor(shape.getStrokeColor());
-        return tempShape;
-    }
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         Processor.shapeList.removeIf(PathShape::isSelected);
         processor.repaint((DrawingPanel)drawPanel);
@@ -569,6 +570,14 @@ public class DrawView extends JFrame {
         strokeWidthInputValue.setText(String.valueOf(currentStrokeSize));
     }//GEN-LAST:event_strokeWidthComboBoxActionPerformed
 
+    private void itemsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_itemsListValueChanged
+        Processor.shapeList.forEach(pathShape -> pathShape.setSelected(false));
+        itemsList.getSelectedValuesList().forEach(shape -> shape.setSelected(true));
+        dragSelectToggleButton.setSelected(true);
+        DragSelectToggleButton.selectedShapeList = itemsList.getSelectedValuesList();
+        processor.repaint((DrawingPanel)drawPanel);
+    }//GEN-LAST:event_itemsListValueChanged
+
     private void checkRotationValue(KeyEvent evt) {
         String regex = "(-?[0-9]{1,3})";
         if (evt.getKeyCode()== KeyEvent.VK_ENTER){
@@ -588,13 +597,14 @@ public class DrawView extends JFrame {
     }
 
     public static void setItemListModel(){
-        listModel = new DefaultListModel();
+        itemsList.removeAll();
+        listModel.removeAllElements();
         for (PathShape shape : Processor.shapeList) {
+            System.out.println(shape.getShape());
             listModel.addElement(shape);
         }
-        jList1.setModel(listModel);
-        jList1.setCellRenderer(itemsListCellRenderer);
-
+        itemsList.setModel(listModel);
+        itemsList.setCellRenderer(itemsListCellRenderer);
     }
 
 
