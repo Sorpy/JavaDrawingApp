@@ -574,7 +574,7 @@ public class DrawView extends JFrame {
         Processor.shapeList.forEach(pathShape -> pathShape.setSelected(false));
         itemsList.getSelectedValuesList().forEach(shape -> shape.setSelected(true));
         dragSelectToggleButton.setSelected(true);
-        DragSelectToggleButton.selectedShapeList = itemsList.getSelectedValuesList();
+        SelectToggleButton.selectedShapeList = itemsList.getSelectedValuesList();
         processor.repaint((DrawingPanel)drawPanel);
     }//GEN-LAST:event_itemsListValueChanged
 
