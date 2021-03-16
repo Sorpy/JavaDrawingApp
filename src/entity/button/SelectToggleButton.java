@@ -41,10 +41,11 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
   @Override
   public void onPressFunction(MouseEvent e) {
     checkShapeSelection(e);
+    RotateProcessor.findCenterOfSelection();
 
     if (!selectedShapeList.isEmpty()) {
       setLastLocation(e.getPoint());
-      RotateProcessor.currentlyRotatedShape = selectedShapeList.get(0);
+      RotateProcessor.addSelectedShapes();
       //Processor.currentlySelectedShape = getSelectedItem();
     }
   }
@@ -54,6 +55,7 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
     if (!selectedShapeList.isEmpty()) {
       Processor.addToUndoList();
     }
+
   }
 
   @Override
@@ -74,7 +76,7 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
     if (!selectedShapeList.isEmpty()) {
       translateTo(e.getPoint());
       setLastLocation(e.getPoint());
-      RotateProcessor.currentlyRotatedShape = selectedShapeList.get(0);
+      RotateProcessor.addSelectedShapes();
     }
   }
 
@@ -87,13 +89,16 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
       setLastLocation(e.getPoint());
     }
     else if(containsPoint(e.getPoint())!=null) {
+      Processor.deselectAll();
+      selectedShapeList = new ArrayList<>();
+      setLastLocation(null);
+      DrawView.setRotateSliderValue(0);
       selectedShapeList.add(containsPoint(e.getPoint()));
     }
     else {
       Processor.deselectAll();
       selectedShapeList = new ArrayList<>();
       setLastLocation(null);
-      RotateProcessor.currentlyRotatedShape = null;
       DrawView.setRotateSliderValue(0);
     }
   }

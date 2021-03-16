@@ -34,6 +34,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -573,7 +574,7 @@ public class DrawView extends JFrame {
     private void itemsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_itemsListValueChanged
         Processor.shapeList.forEach(pathShape -> pathShape.setSelected(false));
         itemsList.getSelectedValuesList().forEach(shape -> shape.setSelected(true));
-        dragSelectToggleButton.setSelected(true);
+        selectToggleButton.setSelected(true);
         SelectToggleButton.selectedShapeList = itemsList.getSelectedValuesList();
         processor.repaint((DrawingPanel)drawPanel);
     }//GEN-LAST:event_itemsListValueChanged
@@ -599,6 +600,7 @@ public class DrawView extends JFrame {
     public static void setItemListModel(){
         itemsList.removeAll();
         listModel.removeAllElements();
+        itemsList.clearSelection();
         for (PathShape shape : Processor.shapeList) {
             System.out.println(shape.getShape());
             listModel.addElement(shape);
@@ -606,7 +608,6 @@ public class DrawView extends JFrame {
         itemsList.setModel(listModel);
         itemsList.setCellRenderer(itemsListCellRenderer);
     }
-
 
     private void canvasMouseListener(){
         drawPanel.addMouseListener(new MouseAdapter() {

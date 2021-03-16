@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JToggleButton;
 import processor.Processor;
+import processor.RotateProcessor;
 
 public class DragSelectToggleButton extends JToggleButton implements CustomToggleButton {
 
@@ -36,7 +37,9 @@ public class DragSelectToggleButton extends JToggleButton implements CustomToggl
         !SelectToggleButton.selectedShapeList.isEmpty()) {
       SelectToggleButton.selectedShapeList.forEach(modelShape -> modelShape.setSelected(true));
     }
+    RotateProcessor.addSelectedShapes();
     Processor.markRect = null;
+    RotateProcessor.findCenterOfSelection();
   }
 
   @Override
