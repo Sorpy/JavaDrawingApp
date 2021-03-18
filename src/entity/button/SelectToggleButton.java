@@ -1,6 +1,9 @@
 package entity.button;
 
 import GUI.DrawView;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import entity.button.common.CustomToggleButton;
 import entity.shape.PathShape;
 import java.awt.Color;
@@ -8,7 +11,17 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JToggleButton;
 import processor.Processor;
@@ -41,12 +54,20 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
   @Override
   public void onPressFunction(MouseEvent e) {
     checkShapeSelection(e);
-    RotateProcessor.findCenterOfSelection();
+    //RotateProcessor.findCenterOfSelection();
 
     if (!selectedShapeList.isEmpty()) {
       setLastLocation(e.getPoint());
-      RotateProcessor.addSelectedShapes();
+      //RotateProcessor.addSelectedShapes();
       //Processor.currentlySelectedShape = getSelectedItem();
+    }
+    ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    try {
+      objectMapper.addMixIn(Rectangle2D.class, Rectangle2DJsonIgnore.class);
+      objectMapper.writeValue(Paths.get("C:\\Users\\Lyubomir Proychev\\Desktop\\object.json").toFile(),Processor.shapeList);
+
+    } catch(Exception exception) {
+      exception.printStackTrace();
     }
   }
 
@@ -55,7 +76,7 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
     if (!selectedShapeList.isEmpty()) {
       Processor.addToUndoList();
     }
-
+    RotateProcessor.findCenterOfSelection();
   }
 
   @Override
@@ -85,10 +106,10 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
   }
 
   private void checkShapeSelection(MouseEvent e) {
-    if (containsPointFromSelected(e.getPoint())){
-      setLastLocation(e.getPoint());
-    }
-    else if(containsPoint(e.getPoint())!=null) {
+//    if (containsPointFromSelected(e.getPoint())){
+//      setLastLocation(e.getPoint());
+//    }
+    if(containsPoint(e.getPoint())!=null) {
       Processor.deselectAll();
       selectedShapeList = new ArrayList<>();
       setLastLocation(null);
@@ -160,5 +181,10 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
       }
     }
     return false;
+  }
+
+  public static interface Rectangle2DJsonIgnore {
+    @JsonIgnore
+    String getBounds2D();
   }
 }

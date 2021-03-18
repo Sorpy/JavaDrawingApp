@@ -23,7 +23,7 @@ public class EllipseToggleButton extends JToggleButton implements CustomToggleBu
 
   @Override
   public void onPressFunction(MouseEvent e) {
-
+    DrawView.setRotateSliderValue(0);
     Processor.deselectAll();
     startPoint = e.getPoint();
   }

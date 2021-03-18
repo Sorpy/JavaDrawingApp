@@ -170,11 +170,6 @@ public class DrawView extends JFrame {
         selectToggleButton.setFocusable(false);
         selectToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         selectToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        selectToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeOtherButtonsActions(evt);
-            }
-        });
         toolBar.add(selectToggleButton);
 
         buttonGroup.add(dragSelectToggleButton);

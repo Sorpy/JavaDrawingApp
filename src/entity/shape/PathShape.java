@@ -1,5 +1,7 @@
 package entity.shape;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,9 +9,14 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import processor.Processor;
 
-public class PathShape extends Path2D.Double implements Cloneable {
+
+@JsonIgnoreProperties(value = { "bounds2D" })
+public class PathShape extends Path2D.Double implements Cloneable, Serializable {
 
   AffineTransform affineTransform;
   private Shape shape;

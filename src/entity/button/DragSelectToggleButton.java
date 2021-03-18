@@ -1,10 +1,14 @@
 package entity.button;
 
+import GUI.DrawView;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.button.common.CustomToggleButton;
 import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,11 +27,19 @@ public class DragSelectToggleButton extends JToggleButton implements CustomToggl
 
   @Override
   public void onPressFunction(MouseEvent e) {
+    DrawView.setRotateSliderValue(0);
     Processor.deselectAll();
     Processor.markRect = null;
     startPoint = e.getPoint();
-
-
+    ObjectMapper mapper = new ObjectMapper();
+    Processor.shapeList.forEach(System.out::println);
+    try {
+      Processor.shapeList =
+          (ArrayList<PathShape>) mapper.readValue(Paths.get("C:\\Users\\Lyubomir Proychev\\Desktop\\object.json").toFile(),ArrayList.class);
+    } catch (IOException ioException) {
+      ioException.printStackTrace();
+    }
+    Processor.shapeList.forEach(System.out::println);
   }
 
   @Override

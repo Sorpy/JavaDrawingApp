@@ -22,7 +22,7 @@ public class RectToggleButton extends JToggleButton implements CustomToggleButto
 
   @Override
   public void onPressFunction(MouseEvent e) {
-
+    DrawView.setRotateSliderValue(0);
     Processor.deselectAll();
     startPoint = e.getPoint();
   }
