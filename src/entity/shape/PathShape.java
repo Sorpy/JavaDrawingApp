@@ -15,10 +15,13 @@ import java.io.Serializable;
 import processor.Processor;
 
 
-@JsonIgnoreProperties(value = { "bounds2D" })
+//@JsonIgnoreProperties(value = { "bounds2D" })
+@JsonIgnoreProperties(ignoreUnknown = true,value = { "bounds2D","identity" })
 public class PathShape extends Path2D.Double implements Cloneable, Serializable {
 
   AffineTransform affineTransform;
+  AffineTransform affineTransform2;
+  @JsonIgnore
   private Shape shape;
   private Long id;
   private boolean selected;
@@ -26,6 +29,11 @@ public class PathShape extends Path2D.Double implements Cloneable, Serializable 
   private float strokeWidth;
   private Color strokeColor;
 
+
+  public PathShape()
+  {
+    super();
+  }
 
   public PathShape(Shape s, AffineTransform at) {
     super(s, at);
@@ -66,6 +74,7 @@ public class PathShape extends Path2D.Double implements Cloneable, Serializable 
     this.strokeWidth = strokeWidth;
     this.strokeColor = strokeColor;
     this.id = id;
+
   }
 
   public Long getId() {

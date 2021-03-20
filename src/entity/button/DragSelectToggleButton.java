@@ -1,6 +1,7 @@
 package entity.button;
 
 import GUI.DrawView;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.button.common.CustomToggleButton;
 import entity.shape.PathShape;
@@ -10,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JToggleButton;
@@ -33,13 +35,17 @@ public class DragSelectToggleButton extends JToggleButton implements CustomToggl
     startPoint = e.getPoint();
     ObjectMapper mapper = new ObjectMapper();
     Processor.shapeList.forEach(System.out::println);
+    PathShape[] tempList = null;
     try {
-      Processor.shapeList =
-          (ArrayList<PathShape>) mapper.readValue(Paths.get("C:\\Users\\Lyubomir Proychev\\Desktop\\object.json").toFile(),ArrayList.class);
+      mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+      tempList =
+          mapper.readValue(Paths.get("C:\\Users\\Lyubomir Proychev\\Desktop\\object.json").toFile(),PathShape[].class);
+      List<PathShape> list = Arrays.asList(tempList);
     } catch (IOException ioException) {
       ioException.printStackTrace();
     }
-    Processor.shapeList.forEach(System.out::println);
+
+    System.out.println(tempList.length);
   }
 
   @Override

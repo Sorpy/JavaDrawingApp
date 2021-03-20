@@ -9,6 +9,7 @@ import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.color.ColorSpace;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
@@ -60,10 +61,13 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
       setLastLocation(e.getPoint());
       //RotateProcessor.addSelectedShapes();
       //Processor.currentlySelectedShape = getSelectedItem();
+      Processor.shapeList.get(0);
     }
     ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     try {
       objectMapper.addMixIn(Rectangle2D.class, Rectangle2DJsonIgnore.class);
+//      objectMapper.addMixIn(Color.class, ColorJsonIgnore.class);
+//      objectMapper.addMixIn(AffineTransform.class, TransformerJsonIgnore.class);
       objectMapper.writeValue(Paths.get("C:\\Users\\Lyubomir Proychev\\Desktop\\object.json").toFile(),Processor.shapeList);
 
     } catch(Exception exception) {
@@ -187,4 +191,21 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
     @JsonIgnore
     String getBounds2D();
   }
+
+  public static interface TransformerJsonIgnore {
+    @JsonIgnore
+    boolean isIdentity();
+    @JsonIgnore
+    double getDeterminant();
+  }
+
+  public static interface ColorJsonIgnore {
+    @JsonIgnore
+    int getTransparency();
+    @JsonIgnore
+    Color getRGB();
+    @JsonIgnore
+    ColorSpace getColorSpace();
+  }
+
 }

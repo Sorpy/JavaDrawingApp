@@ -75,6 +75,8 @@ public class RotateProcessor extends Processor {
             pathShape.getStrokeWidth(),
             pathShape.getId());
         shapeList.set(i, rotated);
+
+        //TODO save initialAffineTransformer so it can be saved in json
       }
     }
   }
