@@ -1,13 +1,24 @@
 package entity.button;
 
 import GUI.DrawView;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.button.SelectToggleButton.ShapeAnnotationSerializer;
 import entity.button.common.CustomToggleButton;
 import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -37,6 +48,8 @@ public class DragSelectToggleButton extends JToggleButton implements CustomToggl
     Processor.shapeList.forEach(System.out::println);
     PathShape[] tempList = null;
     try {
+     // mapper.addMixIn(Shape.class, SelectToggleButton.ShapeAnnotationSerializer.class);
+      //mapper.addMixIn(PathShape.class, PathShapeMixin.class);
       mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
       tempList =
           mapper.readValue(Paths.get("C:\\Users\\Lyubomir Proychev\\Desktop\\object.json").toFile(),PathShape[].class);
@@ -91,5 +104,20 @@ public class DragSelectToggleButton extends JToggleButton implements CustomToggl
     return Processor.shapeList.stream()
         .filter(shape -> shape.intersects(Processor.markRect.getBounds2D()))
         .collect(Collectors.toList());
+  }
+
+//  @JsonTypeInfo(use = Id.CLASS,
+//      include = As.PROPERTY, property = "@class") @JsonSubTypes({
+//
+//      @JsonSubTypes.Type(value = Rectangle2D.Double.class, name = "rectangle"),
+//      @JsonSubTypes.Type(value = Ellipse2D.Double.class, name = "ellipse"),
+//      @JsonSubTypes.Type(value = Line2D.Double.class, name = "line")
+//  })
+//  public static interface ShapeAnnotationSerializer {
+//  }
+
+  public static class PathShapeMixin {
+    @JsonIgnore
+    String clazz;
   }
 }

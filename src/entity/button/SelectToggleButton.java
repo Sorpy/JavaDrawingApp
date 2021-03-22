@@ -2,16 +2,25 @@ package entity.button;
 
 import GUI.DrawView;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import entity.button.common.CustomToggleButton;
 import entity.shape.PathShape;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.color.ColorSpace;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,6 +75,7 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
     ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     try {
       objectMapper.addMixIn(Rectangle2D.class, Rectangle2DJsonIgnore.class);
+      //objectMapper.addMixIn(Shape.class, ShapeAnnotationSerializer.class);
 //      objectMapper.addMixIn(Color.class, ColorJsonIgnore.class);
 //      objectMapper.addMixIn(AffineTransform.class, TransformerJsonIgnore.class);
       objectMapper.writeValue(Paths.get("C:\\Users\\Lyubomir Proychev\\Desktop\\object.json").toFile(),Processor.shapeList);
@@ -191,6 +201,21 @@ public class SelectToggleButton extends JToggleButton implements CustomToggleBut
     @JsonIgnore
     String getBounds2D();
   }
+
+  @JsonTypeInfo(use = Id.CLASS,
+      include = As.PROPERTY, property = "clazz")
+  @JsonSubTypes({
+      @Type(value = Rectangle2D.Double.class, name = "rectangle"),
+      @Type(value = Ellipse2D.Double.class, name = "ellipse"),
+      @Type(value = Line2D.Double.class, name = "line")
+  })
+  public static interface ShapeAnnotationSerializer {
+    //public Shape();
+  }
+
+//  @JsonDeserialize(using = Rectangle2D.Double.class)
+//  public static class RectangleDeserialize {
+//  }
 
   public static interface TransformerJsonIgnore {
     @JsonIgnore

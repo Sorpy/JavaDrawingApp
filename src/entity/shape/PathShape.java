@@ -2,12 +2,20 @@ package entity.shape;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -16,19 +24,24 @@ import processor.Processor;
 
 
 //@JsonIgnoreProperties(value = { "bounds2D" })
-@JsonIgnoreProperties(ignoreUnknown = true,value = { "bounds2D","identity" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PathShape extends Path2D.Double implements Cloneable, Serializable {
 
   AffineTransform affineTransform;
-  AffineTransform affineTransform2;
-  @JsonIgnore
+  @JsonTypeInfo(use = Id.CLASS,
+      include = As.PROPERTY, property = "clazz")
+  @JsonSubTypes({
+      @Type(value = Rectangle2D.Double.class, name = "rectangle"),
+      @Type(value = Ellipse2D.Double.class, name = "ellipse"),
+      @Type(value = Line2D.Double.class, name = "line")
+  })
   private Shape shape;
   private Long id;
   private boolean selected;
   private Color fillColor;
   private float strokeWidth;
   private Color strokeColor;
-
+//TODO add rotation and scale field
 
   public PathShape()
   {
